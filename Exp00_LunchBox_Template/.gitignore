@@ -1,0 +1,8 @@
+*.swp
+*.pyc
+*.jxbrowser-data/
+*.metadata/
+*RemoteSystemsTempFiles/
+*Debug/
+*Release/
+.xdchelp
