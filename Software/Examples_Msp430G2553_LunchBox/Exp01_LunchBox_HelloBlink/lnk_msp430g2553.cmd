@@ -1,5 +1,5 @@
 /* ============================================================================ */
-/* Copyright (c) 2015, Texas Instruments Incorporated                           */
+/* Copyright (c) 2017, Texas Instruments Incorporated                           */
 /*  All rights reserved.                                                        */
 /*                                                                              */
 /*  Redistribution and use in source and binary forms, with or without          */
@@ -44,7 +44,7 @@
 /* -heap   0x0100                                   HEAP AREA SIZE            */
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
-/* Version: 1.173                                                             */
+/* Version: 1.204                                                             */
 /*----------------------------------------------------------------------------*/
 
 /****************************************************************************/
@@ -100,9 +100,19 @@ SECTIONS
     .cio        : {} > RAM                  /* C I/O Buffer                      */
 
     .pinit      : {} > FLASH                /* C++ Constructor tables            */
+    .binit      : {} > FLASH                /* Boot-time Initialization tables   */
     .init_array : {} > FLASH                /* C++ Constructor tables            */
     .mspabi.exidx : {} > FLASH              /* C++ Constructor tables            */
     .mspabi.extab : {} > FLASH              /* C++ Constructor tables            */
+#ifdef __TI_COMPILER_VERSION__
+  #if __TI_COMPILER_VERSION__ >= 15009000
+    #ifndef __LARGE_CODE_MODEL__
+    .TI.ramfunc : {} load=FLASH, run=RAM, table(BINIT)
+    #else
+    .TI.ramfunc : {} load=FLASH | FLASH2, run=RAM, table(BINIT)
+    #endif
+  #endif
+#endif
 
     .infoA     : {} > INFOA              /* MSP430 INFO FLASH Memory segments */
     .infoB     : {} > INFOB
