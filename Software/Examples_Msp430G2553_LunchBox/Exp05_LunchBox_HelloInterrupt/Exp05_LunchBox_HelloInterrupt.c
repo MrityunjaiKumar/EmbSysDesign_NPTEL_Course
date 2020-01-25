@@ -3,6 +3,7 @@
 #define SW      BIT3                    // Switch -> P1.3
 #define RED     BIT7                    // Green LED -> P1.7
 
+/*@brief entry point for the code*/
 void main(void) {
     WDTCTL = WDTPW | WDTHOLD;           // Stop watchdog timer
 
