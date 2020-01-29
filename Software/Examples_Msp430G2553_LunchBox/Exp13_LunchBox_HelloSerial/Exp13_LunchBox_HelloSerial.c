@@ -28,9 +28,13 @@ void main(void)
     __bis_SR_register(LPM0_bits + GIE); // Enter LPM0, Enable Interrupt
 }
 
+/**
+ * @brief
+ * Interrupt Vector for UART on LunchBox
+ **/
 #pragma vector=USCIAB0RX_VECTOR         // UART RX Interrupt Vector
 __interrupt void USCI0RX_ISR(void)
 {
     while (!(IFG2&UCA0TXIFG));          // Check if TX is ongoing
-    UCA0TXBUF = UCA0RXBUF;          // TX -> Received Char + 1
+    UCA0TXBUF = UCA0RXBUF;          // TX -> Received Char
 }
