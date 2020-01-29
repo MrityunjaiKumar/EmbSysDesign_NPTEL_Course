@@ -1,27 +1,36 @@
-#include <msp430.h> 
+#include <msp430.h>
 
-#define SW      BIT3                    // Switch -> P1.3
-#define GREEN   BIT6                    // Green LED -> P1.6
+/**
+ * @brief
+ * These settings are wrt enabling uart on Lunchbox
+ **/
+void register_settings_for_UART()
+{
+    P1SEL = BIT1 + BIT2;              // Select UART RX/TX function on P1.1,P1.2
+    P1SEL2 = BIT1 + BIT2;
 
-void main(void) {
-    WDTCTL = WDTPW | WDTHOLD;           // Stop watchdog timer
-
-    P1DIR |= GREEN;                     // Set LED pin -> Output
-    P1DIR &= ~SW;                       // Set SW pin -> Input
-    P1REN |= SW;                        // Enable Resistor for SW pin
-    P1OUT |= SW;                        // Select Pull Up for SW pin
-
-    P1IES &= ~SW;                       // Select Interrupt on Rising Edge
-    P1IE |= SW;                         // Enable Interrupt on SW pin
-
-    __bis_SR_register(GIE); // Enter LPM4 and Enable CPU Interrupt
-
-    while(1);
+    UCA0CTL1 |= UCSSEL_1;               // UART Clock -> ACLK
+    UCA0BR0 = 3;                        // Baud Rate Setting for 1MHz 9600
+    UCA0BR1 = 0;                        // Baud Rate Setting for 1MHz 9600
+    UCA0MCTL = UCBRF_0 + UCBRS_3;       // Modulation Setting for 1MHz 9600
+    UCA0MCTL &= ~UCOS16;
+    UCA0CTL1 &= ~UCSWRST;               // Initialize UART Module
+    IE2 |= UCA0RXIE;                    // Enable RX interrupt
 }
 
-#pragma vector=PORT1_VECTOR
-__interrupt void Port_1(void)
+/*@brief entry point for the code*/
+void main(void)
 {
-    P1OUT ^= GREEN;                     // Toggle Green LED
-    P1IFG &= ~SW;                       // Clear SW interrupt flag
+    WDTCTL = WDTPW + WDTHOLD;           //! Stop Watchdog (Not recommended for code in production and devices working in field)
+
+    register_settings_for_UART();
+
+    __bis_SR_register(LPM0_bits + GIE); // Enter LPM0, Enable Interrupt
+}
+
+#pragma vector=USCIAB0RX_VECTOR         // UART RX Interrupt Vector
+__interrupt void USCI0RX_ISR(void)
+{
+    while (!(IFG2&UCA0TXIFG));          // Check if TX is ongoing
+    UCA0TXBUF = UCA0RXBUF;          // TX -> Received Char + 1
 }
