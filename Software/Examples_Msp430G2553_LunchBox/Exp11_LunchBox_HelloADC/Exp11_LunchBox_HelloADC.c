@@ -1,27 +1,63 @@
-#include <msp430.h> 
+#include <msp430.h>
 
-#define SW      BIT3                    // Switch -> P1.3
-#define GREEN   BIT6                    // Green LED -> P1.6
+#define GREEN   BIT6
+#define AIN     BIT1
 
-void main(void) {
-    WDTCTL = WDTPW | WDTHOLD;           // Stop watchdog timer
-
-    P1DIR |= GREEN;                     // Set LED pin -> Output
-    P1DIR &= ~SW;                       // Set SW pin -> Input
-    P1REN |= SW;                        // Enable Resistor for SW pin
-    P1OUT |= SW;                        // Select Pull Up for SW pin
-
-    P1IES &= ~SW;                       // Select Interrupt on Rising Edge
-    P1IE |= SW;                         // Enable Interrupt on SW pin
-
-    __bis_SR_register(GIE); // Enter LPM4 and Enable CPU Interrupt
-
-    while(1);
+/**
+ *@brief This function maps input range to the required range
+ *@param long Input value to be mapped
+ *@param long Input value range, minimum value
+ *@param long Input value range, maximum value
+ *@param long Output value range, minimum value
+ *@param long Output value range, maximum value
+ *@return Mapped output value
+ **/
+long map(long x, long in_min, long in_max, long out_min, long out_max) {
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-#pragma vector=PORT1_VECTOR
-__interrupt void Port_1(void)
+/**
+ * @brief
+ * These settings are wrt enabling ADC10 on Lunchbox
+ **/
+void register_settings_for_ADC10()
 {
-    P1OUT ^= GREEN;                     // Toggle Green LED
-    P1IFG &= ~SW;                       // Clear SW interrupt flag
+    ADC10AE0 |= AIN;                            // P1.0 ADC option select
+    ADC10CTL1 = INCH_0;                         // ADC Channel -> 1 (P1.0)
+    ADC10CTL0 = SREF_0 + ADC10SHT_3 + ADC10ON;  // Ref -> Vcc, 64 CLK S&H
+}
+
+/**
+ * @brief
+ * These settings are wrt enabling TIMER0 on Lunchbox
+ **/
+void register_settings_for_TIMER0()
+{
+    P1DIR |= GREEN;                             // Green LED -> Output
+    P1SEL |= GREEN;                             // Green LED -> Select Timer Output
+
+    CCR0 = 255;                                 // Set Timer0 PWM Period
+    CCTL1 = OUTMOD_7;                           // Set TA0.1 Waveform Mode
+    CCR1 = 1;                                   // Set TA0.1 PWM duty cycle
+    TACTL = TASSEL_2 + MC_1;                    // Timer Clock -> SMCLK, Mode -> Up Count
+}
+
+/*@brief entry point for the code*/
+void main(void)
+{
+    WDTCTL = WDTPW + WDTHOLD;                   //! Stop Watchdog (Not recommended for code in production and devices working in field)
+
+    register_settings_for_ADC10();
+
+    register_settings_for_TIMER0();
+
+
+    while(1)
+    {
+        ADC10CTL0 |= ENC + ADC10SC;             // Sampling and conversion start
+
+        while(ADC10CTL1 & ADC10BUSY);           // Wait for conversion to end
+
+        CCR1 = map(ADC10MEM, 0, 1024, 1, 255);
+    }
 }
