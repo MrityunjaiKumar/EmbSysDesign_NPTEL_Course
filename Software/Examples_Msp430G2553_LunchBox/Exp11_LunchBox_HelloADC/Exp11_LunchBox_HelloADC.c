@@ -1,7 +1,7 @@
 #include <msp430.h>
 
 #define GREEN   BIT6
-#define AIN     BIT1
+#define AIN     BIT0
 
 /**
  *@brief This function maps input range to the required range
