@@ -24,44 +24,57 @@
 #define D7  (SEG_A + SEG_B + SEG_C)
 #define D8  (SEG_A + SEG_B + SEG_C + SEG_D + SEG_E + SEG_F + SEG_G)
 #define D9  (SEG_A + SEG_B + SEG_C + SEG_D + SEG_F + SEG_G)
-#define DA  (SEG_A + SEG_B + SEG_C + SEG_D + SEG_F + SEG_G)
-#define DB  (SEG_A + SEG_B + SEG_C + SEG_D + SEG_F + SEG_G)
-#define DC  (SEG_A + SEG_B + SEG_C + SEG_D + SEG_F + SEG_G)
-#define DD  (SEG_A + SEG_B + SEG_C + SEG_D + SEG_F + SEG_G)
-#define DE  (SEG_A + SEG_B + SEG_C + SEG_D + SEG_F + SEG_G)
-#define DF  (SEG_A + SEG_B + SEG_C + SEG_D + SEG_F + SEG_G)
+#define DA  (SEG_A + SEG_B + SEG_C + SEG_E + SEG_F + SEG_G)
+#define DB  (SEG_C + SEG_D + SEG_E + SEG_F + SEG_G)
+#define DC  (SEG_A + SEG_D + SEG_E + SEG_F)
+#define DD  (SEG_B + SEG_C + SEG_D + SEG_E + SEG_G)
+#define DE  (SEG_A + SEG_D + SEG_E + SEG_F + SEG_G)
+#define DF  (SEG_A + SEG_E + SEG_F + SEG_G)
 
 
 // Define mask value for all digit segments except DP
 #define DMASK   ~(SEG_A + SEG_B + SEG_C + SEG_D + SEG_E + SEG_F + SEG_G)
 
 // Store digits in array for display
-const unsigned int digits[10] = {D0, D1, D2, D3, D4, D5, D6, D7, D8, D9, DA, DB, DC, DD, DE, DF};
+const unsigned int digits[16] = {D0, D1, D2, D3, D4, D5, D6, D7, D8, D9, DA, DB, DC, DD, DE, DF};
 
 volatile unsigned int i = 0;
 
-
-/*@brief entry point for the code*/
-void main(void) {
-    WDTCTL = WDTPW | WDTHOLD;           // Stop watchdog timer
-
-    // Initialize 7-segment pins as Output
-    P1DIR |= (SEG_A + SEG_B + SEG_C + SEG_D + SEG_E+ SEG_F + SEG_G + SEG_DP);
-
-
+/**
+ * @brief
+ * These settings are wrt enabling Interrupt on Lunchbox
+ **/
+void register_settings_for_Interrupt()
+{
     P2DIR &= ~SW;                       // Set SW pin -> Input
     P2REN |= SW;                        // Enable Resistor for SW pin
     P2OUT |= SW;                        // Select Pull Up for SW pin
 
-    P2IES &= ~SW;                       // Select Interrupt on Rising Edge
-    P2IE |= SW;                         // Enable Interrupt on SW pin
+    P2IES |= SW;                        // Select Interrupt on Falling Edge
+    P2IE  |= SW;                        // Enable Interrupt on SW pin
+
+    __bis_SR_register(GIE);             // Enable CPU Interrupt
+}
+
+/*@brief entry point for the code*/
+void main(void) {
+    WDTCTL = WDTPW | WDTHOLD;           //! Stop Watchdog (Not recommended for code in production and devices working in field)
+
+    // Initialize 7-segment pins as Output
+    P1DIR |= (SEG_A + SEG_B + SEG_C + SEG_D + SEG_E+ SEG_F + SEG_G + SEG_DP);
+
+    register_settings_for_Interrupt();
 
     while(1)
     {
-        P1OUT = (P2OUT & DMASK) + digits[i];    // Display current digit
+        P1OUT = (P1OUT & DMASK) + digits[i];    // Display current digit
     }
 }
 
+/**
+ * @brief
+ * Interrupt Vector for Port 2 on LunchBox
+ **/
 #pragma vector=PORT2_VECTOR
 __interrupt void Port_2(void)
 {
