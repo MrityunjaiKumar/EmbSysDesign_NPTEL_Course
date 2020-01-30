@@ -20,6 +20,7 @@ void main(void) {
     while(1);
 }
 
+/*@brief entry point for switch interrupt*/
 #pragma vector=PORT1_VECTOR
 __interrupt void Port_1(void)
 {
