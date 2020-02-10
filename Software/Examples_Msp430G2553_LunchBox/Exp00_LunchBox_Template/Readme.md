@@ -6,7 +6,7 @@ ___
 
 This example code provides a template of settings for LunchBox.
 
-### Hardare needed
+### Hardware needed
 
 None
 

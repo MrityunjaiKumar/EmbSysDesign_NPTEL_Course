@@ -1,4 +1,4 @@
-# Exp 01 
+# Exp 02 
 ## LunchBox Hello Blink
 ___
 
@@ -6,7 +6,7 @@ ___
 
 This example code provides the functions and register settings to toggle the LED present on LunchBox.
 
-### Hardare needed
+### Hardware needed
 
 None
 

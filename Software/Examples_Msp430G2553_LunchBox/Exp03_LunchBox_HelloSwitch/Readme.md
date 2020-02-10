@@ -1,12 +1,12 @@
-# Exp 00 
-## LunchBox Template
+# Exp 03 
+## LunchBox Hello Switch
 ___
 
 ### Description
 
-This example code provides a template of settings for LunchBox.
+This example code provides the functions and register settings for toggling the state of onboard LED with switch present on LunchBox.
 
-### Hardare needed
+### Hardware needed
 
 None
 

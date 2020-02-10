@@ -1,15 +1,15 @@
-# Exp 00 
-## LunchBox Template
+# Exp 05 
+## LunchBox Hello Switch Pull Down
 ___
 
 ### Description
 
-This example code provides a template of settings for LunchBox.
+This example code provides the functions and register settings for toggling the state of LED on LunchBox with an external switch connected with a Pull Down resistor.
 
-### Hardare needed
+### Hardware needed
 
-None
+Push Button Switch, Resistor (1 kohm), Breadboard, Connecting Wires
 
 ### Connections
 
-None
+One end of Switch is connected to Vcc (3.3 V) and another end is at pin 1.4 of LunchBox. This pin is also connected to ground through a Pull Down resistor.

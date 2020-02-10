@@ -1,12 +1,12 @@
-# Exp 00 
-## LunchBox Template
+# Exp 04 
+## LunchBox Debouncing the Switch
 ___
 
 ### Description
 
-This example code provides a template of settings for LunchBox.
+This example code is similar to that of LunchBox Hello Switch. The only difference is that in this code Switch bounces are ignored.
 
-### Hardare needed
+### Hardware needed
 
 None
 
