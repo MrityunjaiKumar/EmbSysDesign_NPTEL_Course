@@ -1,15 +1,17 @@
 #include <msp430.h> 
 
-#define SW  BIT3                    // Switch -> P1.3
-#define LED BIT7                    // Red LED -> P1.7
+#define SW  BIT4                    // Switch -> P1.4 (External Switch, Pull-Up configuration)
+#define LED BIT7                    // Red LED -> P1.7 (External Switch, Active-High configuration)
 
 /*@brief entry point for the code*/
 void main(void) {
     WDTCTL = WDTPW | WDTHOLD;       // Stop watchdog timer
 
     P1DIR |= LED;                   // Set LED pin -> Output
-    P1DIR &= ~SW;                   // Set SW pin -> Input
 
+    P1DIR &= ~SW;                   // Set SW pin -> Input
+    P1REN |= SW;                    // Enable Resistor for SW pin
+    P1OUT |= SW;                    // Select Pull Up for SW pin
 
     while(1)
     {

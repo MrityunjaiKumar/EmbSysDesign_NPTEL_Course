@@ -1,7 +1,7 @@
 #include <msp430.h> 
 
-#define SW  BIT3                    // Switch -> P1.3
-#define LED BIT7                    // Red LED -> P1.7
+#define SW  BIT3                    // Switch -> P1.3 (On-board Switch, Pull-Up configuration)
+#define LED BIT7                    // Red LED -> P1.7 (On-Board LED, Active High Configuration)
 
 /*@brief entry point for the code*/
 void main(void) {
@@ -10,13 +10,13 @@ void main(void) {
     P1DIR |= LED;                   // Set LED pin -> Output
 
     P1DIR &= ~SW;                   // Set SW pin -> Input
-    P1REN |= SW;                    // Enable Resistor for SW pin
-    P1OUT |= SW;                    // Select Pull Up for SW pin
+
 
     while(1)
     {
         if(!(P1IN & SW))            // If SW is Pressed
         {
+            while(!(P1IN & SW));    // Wait till SW Released
             P1OUT ^= LED;           // Toggle LED
         }
     }
