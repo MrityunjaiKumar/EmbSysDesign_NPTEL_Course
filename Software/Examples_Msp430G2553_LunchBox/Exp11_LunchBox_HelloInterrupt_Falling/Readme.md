@@ -1,15 +1,15 @@
-# Exp 00 
-## LunchBox Template
+# Exp 11
+## LunchBox Hello Interrupt on Falling Edge 
 ___
 
 ### Description
 
-This example code provides a template of settings for LunchBox.
+This example code provides the functions and register settings for toggling the state of onboard LED with an external switch having interrupt on falling edge.
 
-### Hardare needed
+### Hardware needed
 
-None
+Push Button Switch, Resistor (1 kohm), Breadboard, Connecting wires.
 
 ### Connections
 
-None
+One end of switch is connected to Ground and another end is connected to pin 1.4 of Lunchbox. This pin is also connected to Vcc (3.3 V) through a pull-up resistor.
