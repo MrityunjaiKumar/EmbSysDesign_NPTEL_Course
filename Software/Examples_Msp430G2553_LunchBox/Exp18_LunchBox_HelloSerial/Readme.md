@@ -1,15 +1,15 @@
-# Exp 00 
-## LunchBox Template
+# Exp 18 
+## LunchBox Hello Serial
 ___
 
 ### Description
 
-This example code provides a template of settings for LunchBox.
+This example code provides function and register settings for enabling serial communication with UART on LunchBox. Baud Rate for UART communication is set to 9600. 
 
-### Hardare needed
+### Hardware needed
 
 None
 
 ### Connections
 
-None
+For using UART, Jumper J1 and J2 needs to be changed from Programming mode to UART mode.
