@@ -1,15 +1,16 @@
-# Exp 00 
-## LunchBox Template
+# Exp 14 
+## LunchBox Hello Hardware PWM
 ___
 
 ### Description
 
-This example code provides a template of settings for LunchBox.
+This example code provides function and register settings for using Hardware PWM on LunchBox. In this example code, internal 16 bit Timer is used for generating PWM signal of fixed duty cycle. 
+Pin 1.6 of LunchBox is used for getting PWM output.
 
-### Hardare needed
+### Hardware needed
 
-None
+Breadboard, Connecting wires, LED, Resistor (1 kohm). 
 
 ### Connections
 
-None
+Pin 1.6 of Lunchbox is connected to anode of LED through a resistor of 1 kohm and cathode to Ground.

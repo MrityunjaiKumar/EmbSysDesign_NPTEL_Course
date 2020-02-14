@@ -1,12 +1,13 @@
-# Exp 00 
-## LunchBox Template
+# Exp 15 
+## LunchBox Hello Software PWM
 ___
 
 ### Description
 
-This example code provides a template of settings for LunchBox.
+This example code provides function and register settings for generating PWM signal with help of delay using C commands (Software PWM).
+In this code, intensity of onboard LED on Lunchbox is controlled with Software PWM.
 
-### Hardare needed
+### Hardware needed
 
 None
 

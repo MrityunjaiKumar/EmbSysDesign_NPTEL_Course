@@ -1,6 +1,6 @@
 #include <msp430.h> 
 
-#define RED   BIT7                    // Green LED -> P1.7
+#define RED   BIT7                    // Red LED -> P1.7
 
 /**
  *@brief  This function provides delay
