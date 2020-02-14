@@ -1,0 +1,24 @@
+Experiment 12 - LunchBox Hello Seven Segment Display with Interrupt
+===================================
+
+Description
+^^^^^^^^^^^^
+This example code provides function and register settings for increasing count on every press of external switch having interrupt on falling edge. The count will increase from 0 to F (in Hexadecimal). 
+
+Hardware needed
+^^^^^^^^^^^^^^^
+Single Seven Segment Display (SSD) - Common Cathode, Resistors - 270 ohm (quanitity - 8), 1 kohm (quanitity - 1), Toggle Push Button Switch, Connecting wires.
+
+Connections
+^^^^^^^^^^^
+One end of switch is connected to Ground and another end is connected to pin 2.3 of Lunchbox, this pin is also connected to Vcc (3.3 V) through a pull-up resistor. Ground pin of SSD is connected to Ground of LunchBox, pins a,b,c,d,e,f,g,decimal of SSD are connected to pins 1.0 to 1.7 of LunchBox respectively through resistor of 270 ohm.
+
+Output
+^^^^^^
+
+Code
+^^^^
+
+.. literalinclude:: ../../../../Software/EmbSysDesign/Software/Examples_Msp430G2553_LunchBox/Exp12_LunchBox_HelloSSDWithInterrupt/Exp12_LunchBox_HelloSSDWithInterrupt.c
+    :linenos:
+    :language: c
