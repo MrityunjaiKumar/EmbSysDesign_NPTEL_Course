@@ -3,6 +3,8 @@
 
 #define AIN     BIT0
 
+#define SW      BIT4                    // Switch -> P2.4
+
 // Define Pin Mapping of 7-segment Display
 // Segment A is connected to P2.5
 // Segments B-G and DP are connected to P1.1 - P1.7
@@ -15,7 +17,7 @@
 #define SEG_G   BIT6
 #define SEG_DP  BIT7
 
-// Segments 1-4 are connected to P2.0 - P1.3
+// Segments 1-4 are connected to P2.0 - P2.3
 #define SEG_1   BIT0
 #define SEG_2   BIT1
 #define SEG_3   BIT2
@@ -105,29 +107,33 @@ void fourDigitNumber(int number)
   P1OUT &=~ (SEG_B + SEG_C + SEG_D + SEG_E + SEG_F + SEG_G);
   P2OUT &=~ SEG_A;
   P2OUT &=~ (SEG_1 + SEG_2 + SEG_3 + SEG_4);
-  P2OUT |= SEG_4;
+
   digitToDisplay(displayDigit[0]);    // Display current digit
+  P2OUT |= SEG_4;
   delay(delayValue);
 
   P1OUT &=~ (SEG_B + SEG_C + SEG_D + SEG_E + SEG_F + SEG_G);
   P2OUT &=~ SEG_A;
   P2OUT &=~ (SEG_1 + SEG_2 + SEG_3 + SEG_4);
-  P2OUT |= SEG_3;
+
   digitToDisplay(displayDigit[1]);    // Display current digit
+  P2OUT |= SEG_3;
   delay(delayValue);
 
   P1OUT &=~ (SEG_B + SEG_C + SEG_D + SEG_E + SEG_F + SEG_G);
   P2OUT &=~ SEG_A;
   P2OUT &=~ (SEG_1 + SEG_2 + SEG_3 + SEG_4);
-  P2OUT |= SEG_2;
+
   digitToDisplay(displayDigit[2]);    // Display current digit
+  P2OUT |= SEG_2;
   delay(delayValue);
 
   P1OUT &=~ (SEG_B + SEG_C + SEG_D + SEG_E + SEG_F + SEG_G);
   P2OUT &=~ SEG_A;
   P2OUT &=~ (SEG_1 + SEG_2 + SEG_3 + SEG_4);
-  P2OUT |= SEG_1;
+
   digitToDisplay(displayDigit[3]);    // Display current digit
+  P2OUT |= SEG_1;
   delay(delayValue);
 }
 
@@ -157,14 +163,20 @@ void register_settings_for_ADC10()
 
 /**
  * @brief
- * These settings are wrt enabling TIMER0 on Lunchbox
+ * These settings are wrt enabling Interrupt on Lunchbox
  **/
-void register_settings_for_TIMER0()
+void register_settings_for_Interrupt()
 {
-    TACCR0 = 30000;                      // Set Timer Timeout Value
-    TACCTL0 |= CCIE;                    // Enable Overflow Interrupt
-    TACTL |= MC_1 + TASSEL_1 + TACLR ;  // Set Mode -> Up Count, Clock -> ACLK, Clear Timer
+    P2DIR &= ~SW;                       // Set SW pin -> Input
+    P2REN |= SW;                        // Enable Resistor for SW pin
+    P2OUT |= SW;                        // Select Pull Up for SW pin
+
+    P2IES |= SW;                        // Select Interrupt on Falling Edge
+    P2IE  |= SW;                        // Enable Interrupt on SW pin
+
+    __bis_SR_register(GIE);             // Enable CPU Interrupt
 }
+
 
 /*@brief entry point for the code*/
 void main(void) {
@@ -180,7 +192,8 @@ void main(void) {
 
     register_settings_for_ADC10();
 
-    register_settings_for_TIMER0();
+    //register_settings_for_TIMER0();
+    register_settings_for_Interrupt();
 
     __bis_SR_register(GIE);                     // Enable CPU Interrupt
     while(1)
@@ -195,11 +208,16 @@ void main(void) {
     }
 }
 
-/*@brief entry point for the TIMER0 interrupt vector*/
-#pragma vector = TIMER0_A0_VECTOR               // CCR0 Interrupt Vector
-__interrupt void CCR0_ISR(void)
+/**
+ * @brief
+ * Interrupt Vector for Port 2 on LunchBox
+ **/
+
+#pragma vector=PORT2_VECTOR
+__interrupt void Port_2(void)
 {
     displayValue++;
-    if(displayValue > 9999)
-        displayValue = 0;
+        if(displayValue > 9999)
+            displayValue = 0;
+    P2IFG &= ~SW;                       // Clear SW interrupt flag
 }
