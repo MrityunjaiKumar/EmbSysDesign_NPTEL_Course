@@ -207,12 +207,10 @@ void main(void) {
 
     }
 }
-
 /**
  * @brief
  * Interrupt Vector for Port 2 on LunchBox
  **/
-
 #pragma vector=PORT2_VECTOR
 __interrupt void Port_2(void)
 {
