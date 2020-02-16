@@ -1,9 +1,9 @@
-Experiment 12 - LunchBox Hello Seven Segment Display with Interrupt
+Experiment 12 - LunchBox Hello Seven Segment Display
 ===================================
 
 Description
 ^^^^^^^^^^^^
-This example code provides function and register settings for increasing count on every press of external switch having interrupt on falling edge. The count will increase from 0 to F (in Hexadecimal). 
+This example code provides function and register settings for increasing count on every press of external switch. The count will increase from 0 to F (in Hexadecimal). 
 
 Hardware needed
 ^^^^^^^^^^^^^^^
@@ -19,6 +19,6 @@ Output
 Code
 ^^^^
 
-.. literalinclude:: ../../../../Software/EmbSysDesign/Software/Examples_Msp430G2553_LunchBox/Exp12_LunchBox_HelloSSDWithInterrupt/Exp12_LunchBox_HelloSSDWithInterrupt.c
+.. literalinclude:: ../../../../Software/EmbSysDesign/Software/Examples_Msp430G2553_LunchBox/Exp12_LunchBox_HelloSSD/Exp12_LunchBox_HelloSSD.c
     :linenos:
     :language: c

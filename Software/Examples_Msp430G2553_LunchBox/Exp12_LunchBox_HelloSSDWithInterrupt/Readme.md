@@ -1,10 +1,10 @@
 # Exp 12
-## LunchBox Hello Seven Segment Display with Interrupt
+## LunchBox Hello Seven Segment Display
 ___
 
 ### Description
 
-This example code provides function and register settings for increasing count on every press of external switch having interrupt on falling edge. The count will increase from 0 to F (in Hexadecimal). 
+This example code provides function and register settings for increasing count on every press of external switch. The count will increase from 0 to F (in Hexadecimal). 
 
 ### Hardware needed
 

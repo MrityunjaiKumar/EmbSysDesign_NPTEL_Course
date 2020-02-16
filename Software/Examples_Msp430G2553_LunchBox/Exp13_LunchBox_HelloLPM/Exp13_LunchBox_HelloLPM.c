@@ -11,7 +11,7 @@ void main(void) {
     P1DIR &= ~SW;                       // Set SW pin -> Input
     P1REN |= SW;                        // Enable Resistor for SW pin
     P1OUT |= SW;                        // Select Pull Up for SW pin
-
+    P1OUT &= ~RED;                      // Turn RED LED off
     P1IES &= ~SW;                       // Select Interrupt on Rising Edge
     P1IE |= SW;                         // Enable Interrupt on SW pin
 
@@ -20,7 +20,7 @@ void main(void) {
         //__bis_SR_register(GIE);             // Enable CPU Interrupt
         __bis_SR_register(LPM4_bits + GIE); // Enter LPM4 and Enable CPU Interrupt
 
-        P1OUT ^= RED;                       // Toggle Green LED
+        P1OUT ^= RED;                       // Toggle RED LED
     }
 }
 

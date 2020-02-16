@@ -1,4 +1,4 @@
-#include <msp430.h> 
+#include <msp430.h>
 
 #define SW      BIT3                    // Switch -> P2.3
 
@@ -40,22 +40,6 @@ const unsigned int digits[16] = {D0, D1, D2, D3, D4, D5, D6, D7, D8, D9, DA, DB,
 
 volatile unsigned int i = 0;
 
-/**
- * @brief
- * These settings are wrt enabling Interrupt on Lunchbox
- **/
-void register_settings_for_Interrupt()
-{
-    P2DIR &= ~SW;                       // Set SW pin -> Input
-    P2REN |= SW;                        // Enable Resistor for SW pin
-    P2OUT |= SW;                        // Select Pull Up for SW pin
-
-    P2IES |= SW;                        // Select Interrupt on Falling Edge
-    P2IE  |= SW;                        // Enable Interrupt on SW pin
-
-    __bis_SR_register(GIE);             // Enable CPU Interrupt
-}
-
 /*@brief entry point for the code*/
 void main(void) {
     WDTCTL = WDTPW | WDTHOLD;           //! Stop Watchdog (Not recommended for code in production and devices working in field)
@@ -63,23 +47,16 @@ void main(void) {
     // Initialize 7-segment pins as Output
     P1DIR |= (SEG_A + SEG_B + SEG_C + SEG_D + SEG_E+ SEG_F + SEG_G + SEG_DP);
 
-    register_settings_for_Interrupt();
-
     while(1)
     {
+        if(!(P2IN & SW))            // If SW is Pressed
+        {
+            __delay_cycles(20000);    //Delay to avoid Switch Bounce
+            while(!(P2IN & SW));    // Wait till SW Released
+            i++;                      //Increment count
+            if(i>15)
+                i=0;
+        }
         P1OUT = (P1OUT & DMASK) + digits[i];    // Display current digit
     }
-}
-
-/**
- * @brief
- * Interrupt Vector for Port 2 on LunchBox
- **/
-#pragma vector=PORT2_VECTOR
-__interrupt void Port_2(void)
-{
-    i++;
-    if(i > 15)
-        i = 0;
-    P2IFG &= ~SW;                       // Clear SW interrupt flag
 }
