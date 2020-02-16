@@ -28,6 +28,6 @@ void main(void) {
 #pragma vector=PORT1_VECTOR
 __interrupt void Port_1(void)
 {
-    __bic_SR_register_on_exit(LPM4_bits + GIE);     // Exit LPM0 on return to main
+    __bic_SR_register_on_exit(LPM4_bits + GIE);     // Exit LPM4 on return to main
     P1IFG &= ~SW;                                   // Clear SW interrupt flag
 }
