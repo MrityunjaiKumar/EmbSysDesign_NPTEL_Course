@@ -61,9 +61,9 @@ void register_settings_for_checking_reset_source()
 
     else if (IFG1 & WDTIFG)                    // Check for Watch Dog Reset flag (WDT)
     {
-        P1OUT|= LEDB;                          // Turning LEDA On
-        P1OUT &= ~LEDA;                        // Turning LEDA On
-        P1OUT &= ~LEDC;                        // Turning LEDA On
+        P1OUT|= LEDB;                          // Turning LEDB On
+        P1OUT &= ~LEDA;                        // Turning LEDA Off
+        P1OUT &= ~LEDC;                        // Turning LEDC Off
 
         IFG1 &=~ PORIFG;                       // Clearing Power on Reset flag
         IFG1 &=~ RSTIFG;                       // Clearing External Reset flag
