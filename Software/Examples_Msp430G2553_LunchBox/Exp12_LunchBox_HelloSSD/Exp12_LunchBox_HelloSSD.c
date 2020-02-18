@@ -57,7 +57,9 @@ void main(void) {
             while(!(P2IN & SW));        // Wait till SW Released
             i++;                        //Increment count
             if(i>15)
+            {
                 i=0;
+            }
         }
         P1OUT = (P1OUT & DMASK) + digits[i];    // Display current digit
     }
