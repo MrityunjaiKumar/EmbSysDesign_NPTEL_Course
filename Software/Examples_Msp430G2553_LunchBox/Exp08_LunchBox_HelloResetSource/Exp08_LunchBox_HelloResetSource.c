@@ -1,26 +1,38 @@
-#include <msp430.h> 
+#include <msp430.h>
 
-#define SW  BIT4                    // Switch -> P1.4 (External Switch, Pull-Up configuration)
-#define LED BIT7                    // Red LED -> P1.7 (External Switch, Active-High configuration)
+#define  LED1 BIT1
+#define  LEDA BIT2
+#define  LEDB BIT3
+#define  LEDC BIT4
 
-/*@brief entry point for the code*/
-void main(void) {
-    WDTCTL = WDTPW | WDTHOLD;       // Stop watchdog timer
-
-    P1DIR |= LED;                   // Set LED pin -> Output
-
-    P1DIR &= ~SW;                   // Set SW pin -> Input
-    P1REN |= SW;                    // Enable Resistor for SW pin
-    P1OUT |= SW;                    // Select Pull Up for SW pin
-
-    while(1)
-    {
-        if(!(P1IN & SW))            // If SW is Pressed
-        {
-            __delay_cycles(20000);  // Wait 20ms to debounce
-            while(!(P1IN & SW));    // Wait till SW Released
-            __delay_cycles(20000);  // Wait 20ms to debounce
-            P1OUT ^= LED;           // Toggle LED
-        }
-    }
+void main(void)
+{
+    BCSCTL1 |= DIVA_3;
+    WDTCTL = WDTPW | WDTSSEL;
+  P1DIR |= (LED1 + LEDA + LEDB + LEDC);
+  P1OUT &=~ (LED1 + LEDA + LEDB + LEDC);
+  if (IFG1 & WDTIFG)
+          {
+              P1OUT|= LEDB;
+              P1OUT &= ~LEDA;
+              P1OUT &= ~LEDC;
+              IFG1 &= ~ WDTIFG;
+          }
+  else if (IFG1 & PORIFG)
+      {
+          P1OUT|= LEDA;
+          P1OUT &= ~LEDB;
+          P1OUT &= ~LEDC;
+      }
+  else if (IFG1 & RSTIFG)
+          {
+              P1OUT|= LEDC;
+              P1OUT &= ~LEDA;
+              P1OUT &= ~LEDB;
+          }
+  while(1)
+  {
+      P1OUT ^= LED1;
+      __delay_cycles(1000000);
+  }
 }
