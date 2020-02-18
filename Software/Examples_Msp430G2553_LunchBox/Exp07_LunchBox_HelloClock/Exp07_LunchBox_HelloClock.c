@@ -1,26 +1,51 @@
 #include <msp430.h> 
 
-#define SW  BIT4                    // Switch -> P1.4 (External Switch, Pull-Up configuration)
-#define LED BIT7                    // Red LED -> P1.7 (External Switch, Active-High configuration)
 
-/*@brief entry point for the code*/
-void main(void) {
-    WDTCTL = WDTPW | WDTHOLD;       // Stop watchdog timer
+/**
+ * main.c
+ */
+int main(void)
+{
+    volatile unsigned int i;                  // Volatile to prevent removal
+    WDTCTL = WDTPW | WDTHOLD;   // stop watchdog timer
 
-    P1DIR |= LED;                   // Set LED pin -> Output
+    // 12Khz VLO
+/*
+    BCSCTL3 |= LFXT1S_2;                      // LFXT1 = VLO
+    IFG1 &= ~OFIFG;                           // Clear OSCFault flag
+    __bis_SR_register(SCG1 + SCG0);           // Stop DCO
+    BCSCTL2 |= SELM_3;                        // MCLK = LFXT1
+*/
 
-    P1DIR &= ~SW;                   // Set SW pin -> Input
-    P1REN |= SW;                    // Enable Resistor for SW pin
-    P1OUT |= SW;                    // Select Pull Up for SW pin
+    // 32Khz External
 
-    while(1)
+    //BCSCTL3 |= LFXT1S_0;                      // LFXT1 = External
+    // Loop until 32kHz crystal stabilizes
+    do
+      {
+        IFG1 &= ~OFIFG;                         // Clear oscillator fault flag
+        for (i = 50000; i; i--);                // Delay
+      }
+      while (IFG1 & OFIFG);                     // Test osc fault flag
+    __bis_SR_register(SCG1 + SCG0);           // Stop DCO
+    BCSCTL2 |= SELM_2;                        // MCLK = LFXT1
+
+    // DCO
+    /*
+    DCOCTL = 0;
+    BCSCTL1 = 0;
+*/
+
+    P1DIR = 0xFF;                             // All P1.x outputs
+    P1OUT = 0;                                // All P1.x reset
+    P2DIR = 0xFF;                             // All P2.x outputs
+    P2OUT = 0;                                // All P2.x reset
+    P1SEL |= BIT0;
+    for (;;)
     {
-        if(!(P1IN & SW))            // If SW is Pressed
-        {
-            __delay_cycles(20000);  // Wait 20ms to debounce
-            while(!(P1IN & SW));    // Wait till SW Released
-            __delay_cycles(20000);  // Wait 20ms to debounce
-            P1OUT ^= LED;           // Toggle LED
-        }
+        P1OUT |= BIT7;                          // P1.0 set
+        for (i = 500; i > 0; i--);               // Delay 1x
+        P1OUT &= ~BIT7;                         // P1.0 reset
+        for (i = 500; i > 0; i--);             // Delay 100x
     }
 }
