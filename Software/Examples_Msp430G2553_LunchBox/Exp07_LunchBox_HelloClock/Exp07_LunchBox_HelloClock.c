@@ -1,51 +1,113 @@
 #include <msp430.h> 
 
+#define LED BIT7
+
+#define SW1 BIT3
+#define SW2 BIT3
+#define SW3 BIT3
+
+volatile unsigned int i;                  // Volatile to prevent removal
+
+/**
+ * @brief
+ * Function to take input from 3 switches and change CPU clock accordingly
+ **/
+void switch_input()
+{
+/*
+    if(!(P1IN & SW1))            // If SW is Pressed
+    {
+        __delay_cycles(20000);  // Wait 20ms to debounce
+        while(!(P1IN & SW1));    // Wait till SW Released
+        __delay_cycles(20000);  // Wait 20ms to debounce
+        // 12Khz VLO
+
+        BCSCTL3 |= LFXT1S_2;                      // LFXT1 = VLO
+        IFG1 &= ~OFIFG;                           // Clear OSCFault flag
+        __bis_SR_register(SCG1 + SCG0);           // Stop DCO
+        BCSCTL2 |= SELM_3;                        // MCLK = LFXT1
+    }
+*/
+
+    if(!(P1IN & SW2))            // If SW is Pressed
+    {
+        __delay_cycles(20000);  // Wait 20ms to debounce
+        while(!(P1IN & SW2));    // Wait till SW Released
+        __delay_cycles(20000);  // Wait 20ms to debounce
+
+        // 32Khz External
+
+        // Loop until 32kHz crystal stabilizes
+        do
+          {
+            IFG1 &= ~OFIFG;                         // Clear oscillator fault flag
+            for (i = 50000; i; i--);                // Delay
+          }
+        while (IFG1 & OFIFG);                     // Test osc fault flag
+
+        __bis_SR_register(SCG1 + SCG0);           // Stop DCO
+        BCSCTL2 |= SELM_2;                        // MCLK = LFXT1
+    }
+/*
+    if(!(P1IN & SW3))            // If SW is Pressed
+    {
+
+        __delay_cycles(2000);  // Wait 20ms to debounce
+        while(!(P1IN & SW3));    // Wait till SW Released
+        __delay_cycles(2000);  // Wait 20ms to debounce
+        // DCO
+
+        DCOCTL = 0;
+        BCSCTL1 = 0;
+        BCSCTL2 |= SELM_0;                        // MCLK = LFXT1
+        __delay_cycles(2000);  // Wait 20ms to debounce
+
+    }
+*/
+}
 
 /**
  * main.c
  */
 int main(void)
 {
-    volatile unsigned int i;                  // Volatile to prevent removal
+
     WDTCTL = WDTPW | WDTHOLD;   // stop watchdog timer
-
-    // 12Khz VLO
 /*
-    BCSCTL3 |= LFXT1S_2;                      // LFXT1 = VLO
-    IFG1 &= ~OFIFG;                           // Clear OSCFault flag
-    __bis_SR_register(SCG1 + SCG0);           // Stop DCO
-    BCSCTL2 |= SELM_3;                        // MCLK = LFXT1
-*/
-
-    // 32Khz External
-
-    //BCSCTL3 |= LFXT1S_0;                      // LFXT1 = External
-    // Loop until 32kHz crystal stabilizes
-    do
-      {
-        IFG1 &= ~OFIFG;                         // Clear oscillator fault flag
-        for (i = 50000; i; i--);                // Delay
-      }
-      while (IFG1 & OFIFG);                     // Test osc fault flag
-    __bis_SR_register(SCG1 + SCG0);           // Stop DCO
-    BCSCTL2 |= SELM_2;                        // MCLK = LFXT1
-
-    // DCO
-    /*
     DCOCTL = 0;
-    BCSCTL1 = 0;
-*/
+                BCSCTL1 = 0;
+                BCSCTL2 |= SELM_0;                        // MCLK = LFXT1
+                */
+    // 12Khz VLO
 
-    P1DIR = 0xFF;                             // All P1.x outputs
-    P1OUT = 0;                                // All P1.x reset
-    P2DIR = 0xFF;                             // All P2.x outputs
-    P2OUT = 0;                                // All P2.x reset
-    P1SEL |= BIT0;
-    for (;;)
+    BCSCTL3 |= LFXT1S_2;                      // LFXT1 = VLO
+    // Loop until 32kHz crystal stabilizes
+        do
+          {
+            IFG1 &= ~OFIFG;                         // Clear oscillator fault flag
+            for (i = 50000; i; i--);                // Delay
+          }
+        while (IFG1 & OFIFG);                     // Test osc fault flag
+    //__bis_SR_register(SCG1 + SCG0);           // Stop DCO
+    BCSCTL2 |= SELM_3;                        // MCLK = LFXT1
+
+
+
+    P1DIR |= LED;
+    P1DIR &=~ (SW1 + SW2 + SW3);
+
+
+    while(1)
     {
-        P1OUT |= BIT7;                          // P1.0 set
-        for (i = 500; i > 0; i--);               // Delay 1x
-        P1OUT &= ~BIT7;                         // P1.0 reset
-        for (i = 500; i > 0; i--);             // Delay 100x
+
+        switch_input();
+
+        P1OUT |= LED;
+        for (i = 500; i > 0; i--);
+
+        switch_input();
+
+        P1OUT &= ~LED;
+        for (i = 500; i > 0; i--);
     }
 }
