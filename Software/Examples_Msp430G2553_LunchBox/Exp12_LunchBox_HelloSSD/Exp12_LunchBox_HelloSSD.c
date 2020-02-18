@@ -42,7 +42,7 @@ volatile unsigned int i = 0;
 
 /*@brief entry point for the code*/
 void main(void) {
-    WDTCTL = WDTPW | WDTHOLD;           //! Stop Watchdog (Not recommended for code in production and devices working in field)
+    WDTCTL = WDTPW | WDTHOLD;           //! Stop Watch dog (Not recommended for code in production and devices working in field)
 
     // Initialize 7-segment pins as Output
     P1DIR |= (SEG_A + SEG_B + SEG_C + SEG_D + SEG_E+ SEG_F + SEG_G + SEG_DP);
@@ -53,9 +53,9 @@ void main(void) {
     {
         if(!(P2IN & SW))            // If SW is Pressed
         {
-            __delay_cycles(20000);    //Delay to avoid Switch Bounce
-            while(!(P2IN & SW));    // Wait till SW Released
-            i++;                      //Increment count
+            __delay_cycles(20000);      //Delay to avoid Switch Bounce
+            while(!(P2IN & SW));        // Wait till SW Released
+            i++;                        //Increment count
             if(i>15)
                 i=0;
         }
