@@ -73,13 +73,28 @@ int main(void)
 {
 
     WDTCTL = WDTPW | WDTHOLD;   // stop watchdog timer
-/*
+
+    do
+              {
+                IFG1 &= ~OFIFG;                         // Clear oscillator fault flag
+                for (i = 50000; i; i--);                // Delay
+              }
+            while (IFG1 & OFIFG);                     // Test osc fault flag
+
+            __bis_SR_register(SCG1 + SCG0);           // Stop DCO
+            BCSCTL2 |= (BIT5 + BIT4);
+            BCSCTL2 |= SELM_2;                        // MCLK = LFXT1
+
+
+            BCSCTL2 &=~ (BIT5 + BIT4);
+                        BCSCTL2 |= SELM_2;                        // MCLK = LFXT1
+    /*
     DCOCTL = 0;
                 BCSCTL1 = 0;
                 BCSCTL2 |= SELM_0;                        // MCLK = LFXT1
                 */
     // 12Khz VLO
-
+/*
     BCSCTL3 |= LFXT1S_2;                      // LFXT1 = VLO
     // Loop until 32kHz crystal stabilizes
         do
@@ -90,9 +105,15 @@ int main(void)
         while (IFG1 & OFIFG);                     // Test osc fault flag
     //__bis_SR_register(SCG1 + SCG0);           // Stop DCO
     BCSCTL2 |= SELM_3;                        // MCLK = LFXT1
-
-
-
+*/
+/*    DCOCTL = 0;
+                    BCSCTL1 = 0;
+                    BCSCTL2 |= SELM_0;                        // MCLK = LFXT1
+/*
+                    DCOCTL |= (BIT5 + BIT6);
+                                        BCSCTL1 |= (BIT0 + BIT1 + BIT2);
+                                        BCSCTL2 |= SELM_0;                        // MCLK = LFXT1
+*/
     P1DIR |= LED;
     P1DIR &=~ (SW1 + SW2 + SW3);
 
