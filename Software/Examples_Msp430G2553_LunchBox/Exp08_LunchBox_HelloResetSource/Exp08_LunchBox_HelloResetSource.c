@@ -23,7 +23,7 @@ void register_settings_for_GPIO()
  * @brief
  * These settings are w.r.t check source of reset on Lunch Box
  **/
-void register_settings_for_checking_reset_source()
+void checking_reset_source()
 {
     if (IFG1 & PORIFG)                         // Check for Power on Reset flag (POR)
     {
@@ -90,7 +90,7 @@ void main(void)
          for (i = 10000; i ; i--);               // Delay, minimum value of i = 5000
       }  while (IFG1 & OFIFG);                   // Test osc fault flag
 
-      register_settings_for_checking_reset_source();
+      checking_reset_source();
 
       while(1)
       {
