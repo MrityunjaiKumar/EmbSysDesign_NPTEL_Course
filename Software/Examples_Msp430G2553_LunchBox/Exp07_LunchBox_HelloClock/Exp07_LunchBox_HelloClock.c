@@ -3,8 +3,8 @@
 #define LED BIT7
 
 #define SW1 BIT3
-#define SW2 BIT3
-#define SW3 BIT3
+#define SW2 BIT4
+#define SW3 BIT5
 
 volatile unsigned int i;                  // Volatile to prevent removal
 
@@ -14,56 +14,64 @@ volatile unsigned int i;                  // Volatile to prevent removal
  **/
 void switch_input()
 {
-/*
-    if(!(P1IN & SW1))            // If SW is Pressed
-    {
-        __delay_cycles(20000);  // Wait 20ms to debounce
-        while(!(P1IN & SW1));    // Wait till SW Released
-        __delay_cycles(20000);  // Wait 20ms to debounce
-        // 12Khz VLO
 
-        BCSCTL3 |= LFXT1S_2;                      // LFXT1 = VLO
-        IFG1 &= ~OFIFG;                           // Clear OSCFault flag
-        __bis_SR_register(SCG1 + SCG0);           // Stop DCO
-        BCSCTL2 |= SELM_3;                        // MCLK = LFXT1
+    if(!(P1IN & SW1))            // If SW1 is Pressed
+    {
+        __delay_cycles(2000);    // Wait 20ms to debounce
+        while(!(P1IN & SW1));    // Wait till SW Released
+        __delay_cycles(2000);    // Wait 20ms to debounce
+
+        BCSCTL2 &=~ (BIT5 + BIT4);      //Reset VLO divider
+        BCSCTL2 |= (BIT5 + BIT4);       //VLO = 12kHz/8 = 1.5kHz
     }
-*/
+
 
     if(!(P1IN & SW2))            // If SW is Pressed
     {
-        __delay_cycles(20000);  // Wait 20ms to debounce
+        __delay_cycles(2000);    // Wait 20ms to debounce
         while(!(P1IN & SW2));    // Wait till SW Released
-        __delay_cycles(20000);  // Wait 20ms to debounce
+        __delay_cycles(2000);    // Wait 20ms to debounce
 
-        // 32Khz External
-
-        // Loop until 32kHz crystal stabilizes
-        do
-          {
-            IFG1 &= ~OFIFG;                         // Clear oscillator fault flag
-            for (i = 50000; i; i--);                // Delay
-          }
-        while (IFG1 & OFIFG);                     // Test osc fault flag
-
-        __bis_SR_register(SCG1 + SCG0);           // Stop DCO
-        BCSCTL2 |= SELM_2;                        // MCLK = LFXT1
+        BCSCTL2 &=~ (BIT5 + BIT4);      //Reset VLO divider
+        BCSCTL2 |= (BIT4);              //VLO = 12kHz/4 = 3kHz
     }
-/*
+
     if(!(P1IN & SW3))            // If SW is Pressed
     {
 
-        __delay_cycles(2000);  // Wait 20ms to debounce
+        __delay_cycles(2000);    // Wait 20ms to debounce
         while(!(P1IN & SW3));    // Wait till SW Released
-        __delay_cycles(2000);  // Wait 20ms to debounce
-        // DCO
+        __delay_cycles(2000);    // Wait 20ms to debounce
 
-        DCOCTL = 0;
-        BCSCTL1 = 0;
-        BCSCTL2 |= SELM_0;                        // MCLK = LFXT1
-        __delay_cycles(2000);  // Wait 20ms to debounce
-
+        BCSCTL2 &=~ (BIT5 + BIT4);      //VLO = 12kHz/1 = 12kHz
     }
-*/
+
+}
+
+/**
+ * @brief
+ * These settings are wrt enabling GPIO on Lunchbox
+ **/
+void register_settings_for_GPIO()
+{
+    P1DIR |= LED;                     //P1.7 is set as Output
+    P1DIR &=~ (SW1 + SW2 + SW3);      //P1.3, P1.4, P1.5 are set as Input
+}
+
+
+/**
+ * @brief
+ * These settings are w.r.t enabling VLO  on Lunch Box
+ **/
+void register_settings_for_VLO()
+{
+   BCSCTL3 |= LFXT1S_2;                       // LFXT1 = VLO
+   do{
+       IFG1 &= ~OFIFG;                     // Clear oscillator fault flag
+       for (i = 50000; i; i--);            // Delay
+     } while (IFG1 & OFIFG);               // Test osc fault flag
+
+   BCSCTL2 |= SELM_3;                      // MCLK = VLO
 }
 
 /**
@@ -72,63 +80,17 @@ void switch_input()
 int main(void)
 {
 
-    WDTCTL = WDTPW | WDTHOLD;   // stop watchdog timer
+    WDTCTL = WDTPW | WDTHOLD;                  //Stop watchdog timer
 
-    do
-              {
-                IFG1 &= ~OFIFG;                         // Clear oscillator fault flag
-                for (i = 50000; i; i--);                // Delay
-              }
-            while (IFG1 & OFIFG);                     // Test osc fault flag
-
-            __bis_SR_register(SCG1 + SCG0);           // Stop DCO
-            BCSCTL2 |= (BIT5 + BIT4);
-            BCSCTL2 |= SELM_2;                        // MCLK = LFXT1
-
-
-            BCSCTL2 &=~ (BIT5 + BIT4);
-                        BCSCTL2 |= SELM_2;                        // MCLK = LFXT1
-    /*
-    DCOCTL = 0;
-                BCSCTL1 = 0;
-                BCSCTL2 |= SELM_0;                        // MCLK = LFXT1
-                */
-    // 12Khz VLO
-/*
-    BCSCTL3 |= LFXT1S_2;                      // LFXT1 = VLO
-    // Loop until 32kHz crystal stabilizes
-        do
-          {
-            IFG1 &= ~OFIFG;                         // Clear oscillator fault flag
-            for (i = 50000; i; i--);                // Delay
-          }
-        while (IFG1 & OFIFG);                     // Test osc fault flag
-    //__bis_SR_register(SCG1 + SCG0);           // Stop DCO
-    BCSCTL2 |= SELM_3;                        // MCLK = LFXT1
-*/
-/*    DCOCTL = 0;
-                    BCSCTL1 = 0;
-                    BCSCTL2 |= SELM_0;                        // MCLK = LFXT1
-/*
-                    DCOCTL |= (BIT5 + BIT6);
-                                        BCSCTL1 |= (BIT0 + BIT1 + BIT2);
-                                        BCSCTL2 |= SELM_0;                        // MCLK = LFXT1
-*/
-    P1DIR |= LED;
-    P1DIR &=~ (SW1 + SW2 + SW3);
-
+    register_settings_for_VLO();               //Register settings for VLO
+    register_settings_for_GPIO();              //Register settings for GPIO
 
     while(1)
     {
+        switch_input();                       //Switch Input
 
-        switch_input();
+        P1OUT ^= LED;                         //LED Toggle
+        for (i = 100; i > 0; i--);
 
-        P1OUT |= LED;
-        for (i = 500; i > 0; i--);
-
-        switch_input();
-
-        P1OUT &= ~LED;
-        for (i = 500; i > 0; i--);
     }
 }
