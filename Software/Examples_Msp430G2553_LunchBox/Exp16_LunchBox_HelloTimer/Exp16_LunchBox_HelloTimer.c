@@ -2,6 +2,8 @@
 #include <inttypes.h>
 
 volatile char count = 0;
+volatile unsigned int i;
+
 /**
  * @brief
  * These settings are wrt enabling GPIO on Lunchbox
@@ -14,24 +16,28 @@ void register_settings_for_GPIO()
 
 /**
  * @brief
- * These settings are wrt enabling TIMER0 on Lunchbox
+ * These settings are w.r.t enabling TIMER0 on Lunch Box
  **/
 void register_settings_for_TIMER0()
 {
     CCTL0 = CCIE;                         // CCR0 interrupt enabled
-    TACTL = TASSEL_2 + MC_1 + ID_3;       // SMCLK/8, upmode
-    CCR0 =  65535;                      // 0.5 Hz
+    TACTL = TASSEL_1 + MC_1;              // ACLK = 32768 Hz, upmode
+    CCR0 =  32768;                        // 1 Hz
 }
 
 /*@brief entry point for the code*/
 void main(void)
 {
-  WDTCTL = WDTPW + WDTHOLD;             //! Stop Watchdog (Not recommended for code in production and devices working in field)
-  BCSCTL2 = DIVS_1;                     //Divider for SMCLK (SMCLK/2)
+  WDTCTL = WDTPW + WDTHOLD;             //! Stop Watch dog (Not recommended for code in production and devices working in field)
+
+  do{
+         IFG1 &= ~OFIFG;                     // Clear oscillator fault flag
+         for (i = 50000; i; i--);            // Delay
+    } while (IFG1 & OFIFG);               // Test osc fault flag
+
   register_settings_for_TIMER0();
   register_settings_for_GPIO();
-  _BIS_SR(CPUOFF + GIE);                // Enter LPM0 w/ interrupt
-
+  _BIS_SR(LPM3_bits + GIE);                // Enter LPM3 w/ interrupt
 }
 
 /*@brief entry point for TIMER0 interrupt vector*/
