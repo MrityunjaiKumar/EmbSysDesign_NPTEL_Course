@@ -13,21 +13,6 @@
 #define RS          BIT2
 #define EN          BIT3
 
-#define LCD_SETCGRAMADDR 0x40
-
-//progress bar character for brightness
-uint8_t pBar[8] = {
-  0x00,
-  0x0A,
-  0x1F,
-  0x1F,
-  0x1F,
-  0x0E,
-  0x04,
-  0x00
-};
-
-//
 /**
  *@brief Delay function for producing delay in 0.1 ms increments
  *@param t milliseconds to be delayed
@@ -102,21 +87,6 @@ void lcd_setCursor(uint8_t row, uint8_t col)
 }
 
 /**
- *@brief Allows us to fill the first 8 CGRAM locations with custom characters
- *@param location Row Cursor of the LCD
- *@param charmap Column Cursor of the LCD
- *@return void
- **/
-void lcd_createChar(uint8_t location, uint8_t charmap[]) {
-  location &= 0x7; // we only have 8 locations 0-7
-  lcd_write(LCD_SETCGRAMADDR | (location << 3), CMD);
-  int i = 0;
-  for (i=0; i<8; i++) {
-      lcd_write(charmap[i], DATA);
-  }
-}
-
-/**
  *@brief Initialize LCD
  **/
 void lcd_init()
@@ -147,21 +117,16 @@ void lcd_init()
     lcd_setCursor(0,0);             // Goto Row 1 Column 1
 }
 
-/@brief entry point for the code/
+/*@brief entry point for the code*/
 void main(void)
 {
     WDTCTL = WDTPW + WDTHOLD;       //! Stop Watchdog (Not recommended for code in production and devices working in field)
 
     lcd_init();                             // Initialising LCD
-    //Create the progress bar character
-    lcd_createChar(0, pBar);                // Creating Custom Character
 
     lcd_setCursor(0,1);                     // Cursor position (0,1)
     lcd_print("Hello Embedded");            // Print
 
     lcd_setCursor(1,3);                     // Cursor position (1,3)
-    lcd_write(0x00, DATA);                  // Printing Custom Char (Heart)
-    lcd_print("Systems");                   // Print
-    lcd_write(0x00, DATA);                  // Printing Custom Char (Heart)
-
+    lcd_print("Systems!");                   // Print
 }

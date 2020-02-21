@@ -13,10 +13,12 @@
 #define RS          BIT2
 #define EN          BIT3
 
+#define SW          BIT3
+
 #define LCD_SETCGRAMADDR 0x40
 
-//progress bar character for brightness
-uint8_t pBar[8] = {
+//Heart character
+uint8_t heart[8] = {
   0x00,
   0x0A,
   0x1F,
@@ -138,30 +140,63 @@ void lcd_init()
     lcd_write(0x0C, CMD);           // Display ON, Cursor OFF, Blink OFF
     delay(1);
 
-    lcd_write(0x01, CMD);           // Clear screen
-    delay(20);
-
     lcd_write(0x06, CMD);           // Auto Increment Cursor
     delay(1);
+
+    lcd_write(0x01, CMD);           // Clear screen
+    delay(20);
 
     lcd_setCursor(0,0);             // Goto Row 1 Column 1
 }
 
-/@brief entry point for the code/
+/*@brief entry point for the code*/
 void main(void)
 {
     WDTCTL = WDTPW + WDTHOLD;       //! Stop Watchdog (Not recommended for code in production and devices working in field)
 
+    uint8_t count = 0;
+
+    P2DIR &=~ SW;
+
     lcd_init();                             // Initialising LCD
-    //Create the progress bar character
-    lcd_createChar(0, pBar);                // Creating Custom Character
+
+    lcd_createChar(0, heart);                // Creating Custom Character
 
     lcd_setCursor(0,1);                     // Cursor position (0,1)
     lcd_print("Hello Embedded");            // Print
 
-    lcd_setCursor(1,3);                     // Cursor position (1,3)
-    lcd_write(0x00, DATA);                  // Printing Custom Char (Heart)
+    lcd_setCursor(1,4);                     // Cursor position (1,3)
     lcd_print("Systems");                   // Print
-    lcd_write(0x00, DATA);                  // Printing Custom Char (Heart)
 
+    while(1)
+    {
+        if(!(P2IN & SW))            // If SW is Pressed
+        {
+            __delay_cycles(20000);  // Wait 20ms to debounce
+            while(!(P2IN & SW));    // Wait till SW Released
+            __delay_cycles(20000);  // Wait 20ms to debounce
+            switch(count)
+            {
+                case 0:
+                {
+                    lcd_setCursor(1,3);                     // Cursor position (1,3)
+                    lcd_write(0x00, DATA);                  // Printing Custom Char (Heart)
+                    lcd_setCursor(1,11);                    // Cursor position (1,11)
+                    lcd_write(0x00, DATA);                  // Printing Custom Char (Heart)
+                    count = 1;
+                    break;
+                }
+
+                case 1:
+                {
+                    lcd_setCursor(1,3);                     // Cursor position (1,3)
+                    lcd_write(0x20, DATA);                  // Printing Space
+                    lcd_setCursor(1,11);                    // Cursor position (1,11)
+                    lcd_write(0x20, DATA);                  // Printing Space
+                    count = 0;
+                    break;
+                }
+            }
+        }
+    }
 }
