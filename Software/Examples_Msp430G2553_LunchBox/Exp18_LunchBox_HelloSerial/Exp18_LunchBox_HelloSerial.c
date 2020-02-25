@@ -36,5 +36,5 @@ void main(void)
 __interrupt void USCI0RX_ISR(void)
 {
     while (!(IFG2&UCA0TXIFG));          // Check if TX is ongoing
-    UCA0TXBUF = UCA0RXBUF;          // TX -> Received Char
+    UCA0TXBUF = UCA0RXBUF + 1;          // TX -> Received Char
 }
