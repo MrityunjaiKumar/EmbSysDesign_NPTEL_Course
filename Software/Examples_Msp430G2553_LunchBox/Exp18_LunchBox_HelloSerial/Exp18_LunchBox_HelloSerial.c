@@ -10,10 +10,9 @@ void register_settings_for_UART()
     P1SEL2 = BIT1 + BIT2;
 
     UCA0CTL1 |= UCSSEL_1;               // UART Clock -> ACLK
-    UCA0BR0 = 3;                        // Baud Rate Setting for 32Khz 9600
-    UCA0BR1 = 0;                        // Baud Rate Setting for 32Khz 9600
-    UCA0MCTL = UCBRF_0 + UCBRS_3;       // Modulation Setting for 32Khz 9600
-    UCA0MCTL &= ~UCOS16;
+    UCA0BR0 = 3;                        // Baud Rate Setting for 32kHz 9600
+    UCA0BR1 = 0;                        // Baud Rate Setting for 32kHz 9600
+    UCA0MCTL = UCBRF_0 + UCBRS_3;       // Modulation Setting for 32kHz 9600
     UCA0CTL1 &= ~UCSWRST;               // Initialize UART Module
     IE2 |= UCA0RXIE;                    // Enable RX interrupt
 }
@@ -26,6 +25,7 @@ void main(void)
     register_settings_for_UART();
 
     __bis_SR_register(LPM0_bits + GIE); // Enter LPM0, Enable Interrupt
+
 }
 
 /**
@@ -36,5 +36,5 @@ void main(void)
 __interrupt void USCI0RX_ISR(void)
 {
     while (!(IFG2&UCA0TXIFG));          // Check if TX is ongoing
-    UCA0TXBUF = UCA0RXBUF + 1;          // TX -> Received Char
+    UCA0TXBUF = UCA0RXBUF + 1;          // TX -> Received Char + 1
 }
