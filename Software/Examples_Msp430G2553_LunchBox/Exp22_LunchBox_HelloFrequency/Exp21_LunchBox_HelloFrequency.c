@@ -1,6 +1,6 @@
 #include <msp430.h>
 #include <inttypes.h>
-#include<stdio.h>
+#include <stdio.h>
 
 #define CMD         0
 #define DATA        1
@@ -80,19 +80,6 @@ void lcd_print(char *s)
     }
 }
 
-/**
- *@brief Function to move cursor to desired position on LCD
- *@param row Row Cursor of the LCD
- *@param col Column Cursor of the LCD
- *@return void
- **/
-void lcd_setCursor(uint8_t row, uint8_t col)
-{
-    const uint8_t row_offsets[] = { 0x00, 0x40};
-    lcd_write(0x80 | (col + row_offsets[row]), CMD);
-    delay(1);
-}
-
 void lcd_printNumber(unsigned int num)
 {
     char buf[6];
@@ -109,6 +96,19 @@ void lcd_printNumber(unsigned int num)
     } while(num);
 
     lcd_print(str);
+}
+
+/**
+ *@brief Function to move cursor to desired position on LCD
+ *@param row Row Cursor of the LCD
+ *@param col Column Cursor of the LCD
+ *@return void
+ **/
+void lcd_setCursor(uint8_t row, uint8_t col)
+{
+    const uint8_t row_offsets[] = { 0x00, 0x40};
+    lcd_write(0x80 | (col + row_offsets[row]), CMD);
+    delay(1);
 }
 
 /**
@@ -159,31 +159,13 @@ void lcd_display()
 
 /**
  * @brief
- * These settings are wrt enabling TIMER0 on Lunchbox
- **/
-void register_settings_for_TIMER0_enable()
-{
-
-}
-
-/**
- * @brief
- * These settings are wrt stopping TIMER0 on Lunchbox
- **/
-void register_settings_for_TIMER0_stop()
-{
-
-}
-
-/**
- * @brief
  * These settings are w.r.t enabling TIMER1 on Lunch Box
  **/
 void register_settings_for_TIMER1()
 {
     //register_settings_for_TIMER0();                 //Initialize Timer1
 
-    TA1CCTL0 = CCIE;                       // CCR0 interrupt disabled
+    TA1CCTL0 = CCIE;                       // CCR0 interrupt enabled
     TA1CCR0 =  32768;                        // 1 Hz
     TA1CTL = TASSEL_1 + MC_1 + TACLR;              // ACLK = 32768 Hz, upmode
 }
@@ -203,51 +185,19 @@ void main(void)
     P1DIR &=~ BIT0;
     P1SEL |= BIT0;
 
-    P1DIR |= BIT4;
-    P1SEL |= BIT4;
-
     BCSCTL2 |= DIVS_2;
-    //lcd_init();                                     // Initialize LCD
+    lcd_init();                                     // Initialize LCD
     register_settings_for_TIMER1();
     register_settings_for_TIMER0_enable();
     __bis_SR_register(GIE);
 
     while(1)
     {
-       //lcd_display();
+       lcd_display();
     }
 
 }
-/*
-#pragma vector = TIMER0_A1_VECTOR
-__interrupt void TIMER0_A1_ISR (void)
-{
-    switch(__even_in_range(TA0IV,0x0A))
-    {
-        case  TA0IV_NONE: break;                            // Vector  0:  No interrupt
 
-        case  TA0IV_TACCR1:                                 // Vector  2:  TACCR1 CCIFG
-
-            if (!count)                                     // Check value of count
-            {
-                edge1 = TA0CCR1;                            // Store timer value of 1st edge
-                count++;                                    // Increment count
-            }
-            else
-            {
-                edge2 = TA0CCR1;                            // Store timer value of 2nd edge
-                count=0;                                    // Reset count
-                __bic_SR_register_on_exit(LPM0_bits + GIE); // Exit LPM0 on return to main
-            }
-            break;
-
-        case TA0IV_TACCR2: break;                           // Vector  4:  TACCR2 CCIFG
-        case TA0IV_6: break;                                // Vector  6:  Reserved CCIFG
-        case TA0IV_8: break;                                // Vector  8:  Reserved CCIFG
-        case TA0IV_TAIFG: break;                            // Vector 10:  TAIFG
-        default:    break;
-    }
-}
 */
 /*@brief entry point for TIMER0 interrupt vector*/
 #pragma vector= TIMER1_A0_VECTOR

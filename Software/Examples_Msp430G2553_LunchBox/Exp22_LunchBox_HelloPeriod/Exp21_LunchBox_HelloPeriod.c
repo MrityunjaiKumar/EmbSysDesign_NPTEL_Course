@@ -1,6 +1,6 @@
 #include <msp430.h>
 #include <inttypes.h>
-#include<stdio.h>
+#include <stdio.h>
 
 #define CMD         0
 #define DATA        1
@@ -79,6 +79,24 @@ void lcd_print(char *s)
     }
 }
 
+void lcd_printNumber(unsigned int num)
+{
+    char buf[6];
+    char *str = &buf[5];
+
+    *str = '\0';
+
+    do
+    {
+        unsigned long m = num;
+        num /= 10;
+        char c = (m - 10 * num) + '0';
+        *--str = c;
+    } while(num);
+
+    lcd_print(str);
+}
+
 /**
  *@brief Function to move cursor to desired position on LCD
  *@param row Row Cursor of the LCD
@@ -133,9 +151,9 @@ void lcd_display()
     lcd_setCursor(0,1);
     lcd_print("Hello Embedded");
     lcd_setCursor(1,0);
-    lcd_print(freqDisplay);
+    lcd_printNumber(freq);
     lcd_print("Hz");
-    delay(10000);
+    delay(1000000);
 }
 
 /**
@@ -149,7 +167,7 @@ void register_settings_for_TIMER0()
 
     TA0CCTL1 = CAP + CM_1 + CCIE + SCS + CCIS_0;    // Capture Mode, Rising Edge, Interrupt
                                                     // Enable, Synchronize, Source -> CCI0A
-    TA0CTL |= TASSEL_1 + MC_2 + TACLR;              // Clock -> ACLK, Cont. Mode, Clear Timer
+    TA0CTL |= TASSEL_1 + MC_2 + TACLR + ID_1;       // Clock -> ACLK/2, Cont. Mode, Clear Timer
 }
 
 /*@brief entry point for the code*/
@@ -163,23 +181,19 @@ void main(void)
 
     while(1)
     {
-        __bic_SR_register(LPM0_bits + GIE);         // Exit LPM0, Disable Interrupt
+
         count = 0;                                  // Initialise count for new capture
         lcd_display();
         __bis_SR_register(LPM0_bits + GIE);         // Enter LPM0, Enable Interrupt
 
         //Exits LPM0 after 2 rising edges are captured
 
-        if(edge2 > edge1)                           // Ignore calculation if overflow occured
-        {
-            period = (overflow * 65535) + edge2 - edge1;                 // Calculate Period
-            freq = 32768L/period;
-            sprintf(freqDisplay,"%f", freq);
-            edge2 = 0;
-            edge1 = 0;
-            overflow = 0;
-        }
-    }
+        period = (overflow * 65535) + edge2 - edge1;                 // Calculate Period
+        freq = 32768L/period;
+        edge2 = 0;
+        edge1 = 0;
+        overflow = 0;
+     }
 }
 
 #pragma vector = TIMER0_A1_VECTOR
