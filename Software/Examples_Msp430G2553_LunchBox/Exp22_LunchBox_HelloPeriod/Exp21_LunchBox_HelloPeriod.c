@@ -14,8 +14,8 @@
 #define RS          BIT0
 #define EN          BIT3
 
-volatile unsigned int count, edge1, edge2, period;  // Global variables
-volatile unsigned long freq;
+volatile unsigned int count, overflow = 0, edge1, edge2, period;  // Global variables
+volatile float freq;
 char freqDisplay[15];
 
 
@@ -172,9 +172,12 @@ void main(void)
 
         if(edge2 > edge1)                           // Ignore calculation if overflow occured
         {
-            period = edge2 - edge1;                 // Calculate Period
+            period = (overflow * 65535) + edge2 - edge1;                 // Calculate Period
             freq = 32768L/period;
-            sprintf(freqDisplay,"%lu", freq);
+            sprintf(freqDisplay,"%f", freq);
+            edge2 = 0;
+            edge1 = 0;
+            overflow = 0;
         }
     }
 }
@@ -188,7 +191,7 @@ __interrupt void TIMER0_A1_ISR (void)
 
         case  TA0IV_TACCR1:                                 // Vector  2:  TACCR1 CCIFG
 
-            if (!count)                                     // Check value of count
+            if (count == 0)                                     // Check value of count
             {
                 edge1 = TA0CCR1;                            // Store timer value of 1st edge
                 count++;                                    // Increment count
@@ -204,7 +207,10 @@ __interrupt void TIMER0_A1_ISR (void)
         case TA0IV_TACCR2: break;                           // Vector  4:  TACCR2 CCIFG
         case TA0IV_6: break;                                // Vector  6:  Reserved CCIFG
         case TA0IV_8: break;                                // Vector  8:  Reserved CCIFG
-        case TA0IV_TAIFG: break;                            // Vector 10:  TAIFG
+        case TA0IV_TAIFG:
+            if(count == 1)
+                overflow++;
+            break;                            // Vector 10:  TAIFG
         default:    break;
     }
 }

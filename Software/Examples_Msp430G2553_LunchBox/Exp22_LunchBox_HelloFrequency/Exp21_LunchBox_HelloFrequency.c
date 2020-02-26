@@ -11,12 +11,13 @@
 #define D5          BIT5
 #define D6          BIT6
 #define D7          BIT7
-#define RS          BIT0
+#define RS          BIT2
 #define EN          BIT3
 
-volatile unsigned int count, edge1, edge2, period;  // Global variables
+volatile unsigned int count = 0, edge1, edge2, period;  // Global variables
 volatile unsigned long freq;
 char freqDisplay[15];
+volatile unsigned int i;
 
 
 /**
@@ -92,6 +93,24 @@ void lcd_setCursor(uint8_t row, uint8_t col)
     delay(1);
 }
 
+void lcd_printNumber(unsigned int num)
+{
+    char buf[6];
+    char *str = &buf[5];
+
+    *str = '\0';
+
+    do
+    {
+        unsigned long m = num;
+        num /= 10;
+        char c = (m - 10 * num) + '0';
+        *--str = c;
+    } while(num);
+
+    lcd_print(str);
+}
+
 /**
  *@brief Initialize LCD
  **/
@@ -133,7 +152,7 @@ void lcd_display()
     lcd_setCursor(0,1);
     lcd_print("Hello Embedded");
     lcd_setCursor(1,0);
-    lcd_print(freqDisplay);
+    lcd_printNumber(edge1);
     lcd_print("Hz");
     delay(10000);
 }
@@ -142,14 +161,31 @@ void lcd_display()
  * @brief
  * These settings are wrt enabling TIMER0 on Lunchbox
  **/
-void register_settings_for_TIMER0()
+void register_settings_for_TIMER0_enable()
 {
-    P1DIR &= ~BIT2;                                 // Set P1.2 -> Input
-    P1SEL |= BIT2;                                  // Set P1.2 -> TA0.1 Capture Mode
 
-    TA0CCTL1 = CAP + CM_1 + CCIE + SCS + CCIS_0;    // Capture Mode, Rising Edge, Interrupt
-                                                    // Enable, Synchronize, Source -> CCI0A
-    TA0CTL |= TASSEL_1 + MC_2 + TACLR;              // Clock -> ACLK, Cont. Mode, Clear Timer
+}
+
+/**
+ * @brief
+ * These settings are wrt stopping TIMER0 on Lunchbox
+ **/
+void register_settings_for_TIMER0_stop()
+{
+
+}
+
+/**
+ * @brief
+ * These settings are w.r.t enabling TIMER1 on Lunch Box
+ **/
+void register_settings_for_TIMER1()
+{
+    //register_settings_for_TIMER0();                 //Initialize Timer1
+
+    TA1CCTL0 = CCIE;                       // CCR0 interrupt disabled
+    TA1CCR0 =  32768;                        // 1 Hz
+    TA1CTL = TASSEL_1 + MC_1 + TACLR;              // ACLK = 32768 Hz, upmode
 }
 
 /*@brief entry point for the code*/
@@ -157,28 +193,32 @@ void main(void)
 {
     WDTCTL = WDTPW + WDTHOLD;                       //! Stop Watchdog (Not recommended for code in production and devices working in field)
 
-    lcd_init();                                     // Initialize LCD
+    unsigned int i;
 
-    register_settings_for_TIMER0();                 //Initialize Timer0
+    do{
+             IFG1 &= ~OFIFG;                     // Clear oscillator fault flag
+             for (i = 50000; i; i--);            // Delay
+        } while (IFG1 & OFIFG);               // Test osc fault flag
+
+    P1DIR &=~ BIT0;
+    P1SEL |= BIT0;
+
+    P1DIR |= BIT4;
+    P1SEL |= BIT4;
+
+    BCSCTL2 |= DIVS_2;
+    //lcd_init();                                     // Initialize LCD
+    register_settings_for_TIMER1();
+    register_settings_for_TIMER0_enable();
+    __bis_SR_register(GIE);
 
     while(1)
     {
-        __bic_SR_register(LPM0_bits + GIE);         // Exit LPM0, Disable Interrupt
-        count = 0;                                  // Initialise count for new capture
-        lcd_display();
-        __bis_SR_register(LPM0_bits + GIE);         // Enter LPM0, Enable Interrupt
-
-        //Exits LPM0 after 2 rising edges are captured
-
-        if(edge2 > edge1)                           // Ignore calculation if overflow occured
-        {
-            period = edge2 - edge1;                 // Calculate Period
-            freq = 32768L/period;
-            sprintf(freqDisplay,"%lu", freq);
-        }
+       //lcd_display();
     }
-}
 
+}
+/*
 #pragma vector = TIMER0_A1_VECTOR
 __interrupt void TIMER0_A1_ISR (void)
 {
@@ -206,5 +246,23 @@ __interrupt void TIMER0_A1_ISR (void)
         case TA0IV_8: break;                                // Vector  8:  Reserved CCIFG
         case TA0IV_TAIFG: break;                            // Vector 10:  TAIFG
         default:    break;
+    }
+}
+*/
+/*@brief entry point for TIMER0 interrupt vector*/
+#pragma vector= TIMER1_A0_VECTOR
+__interrupt void Timer_A (void)
+{
+    if(count == 0)
+    {
+        count++;
+
+        TA0CTL |= TASSEL_2 + MC_2 + TACLR;                      // Clock -> TACLK, Cont. Mode, Clear Timer
+    }
+    else
+    {
+        TA0CTL = MC_0;                                          // Stop
+        edge1 = TAR;
+        count = !count;
     }
 }
