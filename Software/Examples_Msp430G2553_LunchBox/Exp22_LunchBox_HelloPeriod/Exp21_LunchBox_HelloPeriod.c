@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 #define CMD         0
-#define DATA        1
+#define DATA       1
 
 #define LCD_OUT     P1OUT
 #define LCD_DIR     P1DIR
@@ -11,12 +11,11 @@
 #define D5          BIT5
 #define D6          BIT6
 #define D7          BIT7
-#define RS          BIT0
+#define RS          BIT1
 #define EN          BIT3
 
-volatile unsigned int count, overflow = 0, edge1, edge2, period;  // Global variables
-volatile float freq;
-char freqDisplay[15];
+volatile unsigned int count, edge1, edge2, period;  // Global variables
+volatile double freq, time;
 
 
 /**
@@ -79,6 +78,11 @@ void lcd_print(char *s)
     }
 }
 
+/**
+ *@brief Function to convert number into character array
+ *@param num integer number to be converted.
+ *@return void
+ **/
 void lcd_printNumber(unsigned int num)
 {
     char buf[6];
@@ -109,7 +113,6 @@ void lcd_setCursor(uint8_t row, uint8_t col)
     lcd_write(0x80 | (col + row_offsets[row]), CMD);
     delay(1);
 }
-
 /**
  *@brief Initialize LCD
  **/
@@ -146,14 +149,27 @@ void lcd_init()
  **/
 void lcd_display()
 {
+    int int_part_time = time;                                   // Integer part of calculated temperature value
+    int decimal_part_time = (time - (float)int_part_time) * 100.0 ;   // Decimal part of calculated temperature value
+
+    int int_part_freq = freq;                                   // Integer part of calculated temperature value
+    int decimal_part_freq = (freq - (float)int_part_freq) * 100.0 ;   // Decimal part of calculated temperature value
+
     lcd_write(0x01, CMD);                       // Clear screen
     delay(20);
     lcd_setCursor(0,1);
-    lcd_print("Hello Embedded");
-    lcd_setCursor(1,0);
-    lcd_printNumber(freq);
+    lcd_print("Period : ");
+    lcd_printNumber(int_part_time);
+    lcd_print(".");
+    lcd_printNumber(decimal_part_time);
+    lcd_print("s");
+    lcd_setCursor(1,1);
+    lcd_print("Freq   : ");
+    lcd_printNumber(int_part_freq);
+    lcd_print(".");
+    lcd_printNumber(decimal_part_freq);
     lcd_print("Hz");
-    delay(1000000);
+    delay(10000);
 }
 
 /**
@@ -167,7 +183,7 @@ void register_settings_for_TIMER0()
 
     TA0CCTL1 = CAP + CM_1 + CCIE + SCS + CCIS_0;    // Capture Mode, Rising Edge, Interrupt
                                                     // Enable, Synchronize, Source -> CCI0A
-    TA0CTL |= TASSEL_1 + MC_2 + TACLR + ID_1;       // Clock -> ACLK/2, Cont. Mode, Clear Timer
+    TA0CTL |= TASSEL_1 + MC_2 + TACLR + ID_2;       // Clock -> ACLK/4, Cont. Mode, Clear Timer
 }
 
 /*@brief entry point for the code*/
@@ -187,12 +203,14 @@ void main(void)
         __bis_SR_register(LPM0_bits + GIE);         // Enter LPM0, Enable Interrupt
 
         //Exits LPM0 after 2 rising edges are captured
-
-        period = (overflow * 65535) + edge2 - edge1;                 // Calculate Period
-        freq = 32768L/period;
-        edge2 = 0;
-        edge1 = 0;
-        overflow = 0;
+        if(edge2 > edge1)
+        {
+            period =  edge2 - edge1;                 // Calculate Period
+            freq = (32768.0/period) / 4;
+            time = (period /32768.0) * 4;
+            edge2 = 0;
+            edge1 = 0;
+        }
      }
 }
 
@@ -221,10 +239,7 @@ __interrupt void TIMER0_A1_ISR (void)
         case TA0IV_TACCR2: break;                           // Vector  4:  TACCR2 CCIFG
         case TA0IV_6: break;                                // Vector  6:  Reserved CCIFG
         case TA0IV_8: break;                                // Vector  8:  Reserved CCIFG
-        case TA0IV_TAIFG:
-            if(count == 1)
-                overflow++;
-            break;                            // Vector 10:  TAIFG
+        case TA0IV_TAIFG: break;                            // Vector 10:  TAIFG
         default:    break;
     }
 }
