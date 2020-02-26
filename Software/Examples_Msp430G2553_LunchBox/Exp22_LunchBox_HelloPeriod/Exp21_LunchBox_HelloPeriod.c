@@ -200,6 +200,8 @@ void main(void)
 
         count = 0;                                  // Initialise count for new capture
         lcd_display();
+        edge2 = 0;
+        edge1 = 0;
         __bis_SR_register(LPM0_bits + GIE);         // Enter LPM0, Enable Interrupt
 
         //Exits LPM0 after 2 rising edges are captured
@@ -208,8 +210,6 @@ void main(void)
             period =  edge2 - edge1;                 // Calculate Period
             freq = (32768.0/period) / 4;
             time = (period /32768.0) * 4;
-            edge2 = 0;
-            edge1 = 0;
         }
      }
 }
