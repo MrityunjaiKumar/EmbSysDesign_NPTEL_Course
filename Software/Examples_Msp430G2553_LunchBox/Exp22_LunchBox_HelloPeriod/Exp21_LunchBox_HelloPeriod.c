@@ -14,7 +14,8 @@
 #define RS          BIT1
 #define EN          BIT3
 
-volatile unsigned int count, edge1, edge2, period;  // Global variables
+volatile unsigned char count;
+volatile unsigned int edge1, edge2, period;  // Global variables
 volatile double freq, time;
 
 
@@ -197,11 +198,7 @@ void main(void)
 
     while(1)
     {
-
-        count = 0;                                  // Initialise count for new capture
         lcd_display();
-        edge2 = 0;
-        edge1 = 0;
         __bis_SR_register(LPM0_bits + GIE);         // Enter LPM0, Enable Interrupt
 
         //Exits LPM0 after 2 rising edges are captured

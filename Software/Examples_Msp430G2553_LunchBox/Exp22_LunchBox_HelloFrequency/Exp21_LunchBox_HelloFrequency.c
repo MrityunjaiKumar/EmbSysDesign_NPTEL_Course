@@ -14,7 +14,8 @@
 #define RS          BIT1
 #define EN          BIT3
 
-volatile unsigned int count = 0, freq;  // Global variables
+volatile unsigned char count = 0;
+volatile unsigned int freq;  // Global variables
 
 /**
  *@brief Delay function for producing delay in 0.1 ms increments
@@ -170,9 +171,7 @@ void register_settings_for_TIMER1()
 void main(void)
 {
     WDTCTL = WDTPW + WDTHOLD;               //! Stop Watchdog (Not recommended for code in production and devices working in field)
-
     unsigned int i;
-    unsigned char measure = 0;
 
     do{
         IFG1 &= ~OFIFG;                    // Clear oscillator fault flag
@@ -186,16 +185,9 @@ void main(void)
     register_settings_for_TIMER1();        // Setting for Timer1 as 1 second timer.
     while(1)
     {
-        if(measure == 0)                            // Turn measuring on
-        {
-            measure = 1;                            // Turn measuring off
-            __bis_SR_register(LPM0_bits + GIE);     // Enter into low power until capturing is done
-        }
-        else                                        // Capturing done
-        {
-            lcd_display();                          // Display on 16*2 LCD
-            measure = 0;                            // Turn measuring on
-        }
+        TA1CTL |= TACLR;                        // Timer1 value clear
+        __bis_SR_register(LPM0_bits + GIE);     // Enter into low power until capturing is done
+        lcd_display();                          // Display on 16*2 LCD
     }
 }
 
