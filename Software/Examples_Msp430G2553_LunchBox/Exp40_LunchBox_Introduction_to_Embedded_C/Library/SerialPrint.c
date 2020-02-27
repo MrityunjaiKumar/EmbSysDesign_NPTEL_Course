@@ -1,13 +1,10 @@
-#include <msp430.h>
+#include <Library/LunchboxCommon.h>
+#include <msp430.h> 
+
 #include <stdio.h>
 #include <string.h>
 
-/**
- * @brief
- * preprocessor directive for uart
- * For overriding the fputc() and fputs() functions
- **/
-#define UART_PRINTF
+
 
 #ifdef UART_PRINTF
 /**
@@ -54,7 +51,7 @@ int fputs(const char *_ptr, register FILE *_fp)
  * @brief
  * These settings are wrt enabling uart on Lunchbox
  **/
-void register_settings_for_UART()
+void initialise_SerialPrint_on_lunchbox()
 {
     P1SEL = BIT1 + BIT2;              // Select UART RX/TX function on P1.1,P1.2
     P1SEL2 = BIT1 + BIT2;
@@ -66,21 +63,4 @@ void register_settings_for_UART()
     UCA0MCTL &= ~UCOS16;
     UCA0CTL1 &= ~UCSWRST;               // Initialize UART Module
     IE2 |= UCA0RXIE;                    // Enable RX interrupt
-}
-
-/*@brief entry point for the code*/
-void main(void)
-{
-    WDTCTL = WDTPW + WDTHOLD;           //! Stop Watchdog (Not recommended for code in production and devices working in field)
-
-    unsigned int counter = 0;
-
-    register_settings_for_UART();
-
-    int i = 0;
-    while (1)
-    {
-        printf("Hello world %d!\r\n", counter++);
-        for (i = 0; i < 20000; i++);
-    }
 }
