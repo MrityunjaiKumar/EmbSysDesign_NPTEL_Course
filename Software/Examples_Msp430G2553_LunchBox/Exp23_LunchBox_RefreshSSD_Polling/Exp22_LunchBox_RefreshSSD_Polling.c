@@ -23,23 +23,23 @@
 #define SEG_3   BIT2
 #define SEG_4   BIT3
 
-volatile unsigned int delayValue = 0; displayValue = 0;
+volatile unsigned int delayValue = 0, displayValue = 0;
 
 /**
  *@brief Delay function for producing delay in 1 ms increments
  *@param t Input time to be delayed
  *@return void
  **/
-void delay(uint8_t t)
+void delay(uint16_t t)
 {
-    uint8_t i;
+    uint16_t i;
     for(i=t; i > 0; i--)
-        __delay_cycles(1000);
+        __delay_cycles(100);
 }
 
-/**********************************************************************************************
+/********************************
  *
- **********************************************************************************************/
+ ********************************/
 /**
  *@brief This function displays digit on single Seven Segment Display
  *@param digit Digit to be displayed
@@ -161,21 +161,7 @@ void register_settings_for_ADC10()
     ADC10CTL0 = SREF_0 + ADC10SHT_3 + ADC10ON;  // Ref -> Vcc, 64 CLK S&H
 }
 
-/**
- * @brief
- * These settings are wrt enabling Interrupt on Lunchbox
- **/
-void register_settings_for_Interrupt()
-{
-    P2DIR &= ~SW;                       // Set SW pin -> Input
-    P2REN |= SW;                        // Enable Resistor for SW pin
-    P2OUT |= SW;                        // Select Pull Up for SW pin
 
-    P2IES |= SW;                        // Select Interrupt on Falling Edge
-    P2IE  |= SW;                        // Enable Interrupt on SW pin
-
-    __bis_SR_register(GIE);             // Enable CPU Interrupt
-}
 
 
 /*@brief entry point for the code*/
@@ -185,6 +171,7 @@ void main(void) {
     P1DIR |= (SEG_B + SEG_C + SEG_D + SEG_E + SEG_F + SEG_G);
     P2DIR |= SEG_A;
     P2DIR |= (SEG_1 + SEG_2 + SEG_3 + SEG_4);
+    P2DIR &=~ SW;
 
     P1OUT &=~ (SEG_B + SEG_C + SEG_D + SEG_E + SEG_F + SEG_G);
     P2OUT &=~ SEG_A;
@@ -192,30 +179,26 @@ void main(void) {
 
     register_settings_for_ADC10();
 
-    //register_settings_for_TIMER0();
-    register_settings_for_Interrupt();
 
-    __bis_SR_register(GIE);                     // Enable CPU Interrupt
     while(1)
     {
         ADC10CTL0 |= ENC + ADC10SC;             // Sampling and conversion start
 
         while(ADC10CTL1 & ADC10BUSY);           // Wait for conversion to end
 
-        delayValue = map(ADC10MEM, 0, 1024, 6, 255);
-        fourDigitNumber(displayValue);
+        delayValue = map(ADC10MEM, 0, 1024, 1, 1500);
 
+
+        if(!(P2IN & SW))            // If SW is Pressed
+        {
+            __delay_cycles(20000);  // Wait 20ms to debounce
+            while(!(P2IN & SW));    // Wait till SW Released
+            __delay_cycles(20000);  // Wait 20ms to debounce
+            displayValue = displayValue + 1;
+            if(displayValue > 9999)
+                displayValue = 0;
+        }
+
+        fourDigitNumber(displayValue);
     }
-}
-/**
- * @brief
- * Interrupt Vector for Port 2 on LunchBox
- **/
-#pragma vector=PORT2_VECTOR
-__interrupt void Port_2(void)
-{
-    displayValue++;
-        if(displayValue > 9999)
-            displayValue = 0;
-    P2IFG &= ~SW;                       // Clear SW interrupt flag
 }
