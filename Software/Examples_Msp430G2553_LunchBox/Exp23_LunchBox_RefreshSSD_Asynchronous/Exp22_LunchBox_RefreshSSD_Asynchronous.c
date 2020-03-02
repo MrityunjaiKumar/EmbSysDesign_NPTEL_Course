@@ -24,7 +24,8 @@
 #define SEG_4   BIT3
 
 volatile unsigned int delayValue = 0, displayValue = 0;
-volatile unsigned char displayDigit[4], digit = 1;
+volatile unsigned char displayDigit[4], digit = 4;
+volatile int adcValue;
 /**
  *@brief Delay function for producing delay in 1 ms increments
  *@param t Input time to be delayed
@@ -109,7 +110,7 @@ void fourDigitNumber(int number)
  *@param number Number to be displayed
  *@return Void
  **/
-void displayNumber(int number)
+void displayNumber()
 {
   P1OUT &=~ (SEG_B + SEG_C + SEG_D + SEG_E + SEG_F + SEG_G);
   P2OUT &=~ SEG_A;
@@ -185,8 +186,8 @@ void register_settings_for_Interrupt()
 void register_settings_for_TIMER0()
 {
     CCTL0 = CCIE;                         // CCR0 interrupt enabled
-    TACTL = TASSEL_1 + MC_1;              // ACLK = 32768 Hz, upmode
-    CCR0 =  100;                        // 1 Hz
+    TACTL = TASSEL_1 + MC_1 + ID_3;              // ACLK = 32768 Hz, upmode
+    //CCR0 =  1024;                        // 1 Hz
 }
 
 /**
@@ -196,7 +197,7 @@ void register_settings_for_TIMER0()
 void register_settings_for_TIMER1()
 {
     TA1CCTL0 = CCIE;                        // CCR0 interrupt enabled
-    TA1CCR0 =  10000;                       // 1 Hz
+    TA1CCR0 =  4096;                       // 1 Hz
     TA1CTL = TASSEL_1 + MC_1 + TACLR;       // ACLK = 32768 Hz, upmode
 }
 
@@ -205,7 +206,7 @@ void register_settings_for_TIMER1()
 void main(void) {
     WDTCTL = WDTPW | WDTHOLD;                   //! Stop Watchdog (Not recommended for code in production and devices working in field)
 
-    P1DIR |= (SEG_B + SEG_C + SEG_D + SEG_E + SEG_F + SEG_G);
+    P1DIR |= (SEG_B + SEG_C + SEG_D + SEG_E + SEG_F + SEG_G + SEG_DP);
     P2DIR |= SEG_A;
     P2DIR |= (SEG_1 + SEG_2 + SEG_3 + SEG_4);
 
@@ -213,10 +214,12 @@ void main(void) {
     P2OUT &=~ SEG_A;
     P2OUT &=~ (SEG_1 + SEG_2 + SEG_3 + SEG_4);
 
+    BCSCTL1 = DIVA_2;
+
     register_settings_for_ADC10();
 
     register_settings_for_TIMER0();
-    register_settings_for_TIMER1();
+    //register_settings_for_TIMER1();
 
 
     __bis_SR_register(GIE);                     // Enable CPU Interrupt
@@ -231,8 +234,17 @@ void main(void) {
             if(displayValue > 9999)
                 displayValue = 0;
         }
-        fourDigitNumber(displayValue);
+        ADC10CTL0 |= ENC + ADC10SC;             // Sampling and conversion start
 
+            while(ADC10CTL1 & ADC10BUSY);           // Wait for conversion to end
+
+            int adcValue = ADC10MEM;
+
+            if (adcValue <500)
+                CCR0 = 1 + .1*adcValue;
+            else
+                CCR0 = 51 + 0.8*(adcValue - 500);
+        fourDigitNumber(displayValue);
     }
 }
 
@@ -240,10 +252,11 @@ void main(void) {
 #pragma vector= TIMER0_A0_VECTOR
 __interrupt void Timer_A (void)
 {
-    digit++;
-    if(digit > 4)
-        digit = 1;
-    displayNumber(displayValue);
+    //P1OUT ^= SEG_DP;
+    digit--;
+    if(digit == 0)
+        digit = 4;
+    displayNumber();
 }
 
 
@@ -251,8 +264,7 @@ __interrupt void Timer_A (void)
 #pragma vector= TIMER1_A0_VECTOR
 __interrupt void Timer1_A (void)
 {
-    ADC10CTL0 |= ENC + ADC10SC;             // Sampling and conversion start
+    P1OUT &=~ SEG_DP;
 
-    while(ADC10CTL1 & ADC10BUSY);           // Wait for conversion to end
-    CCR0 = map(ADC10MEM, 0, 1024, 100, 32768);
+    P1OUT ^= SEG_DP;
 }

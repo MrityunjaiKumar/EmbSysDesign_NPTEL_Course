@@ -23,10 +23,11 @@
 #define SEG_3   BIT2
 #define SEG_4   BIT3
 
-volatile unsigned int delayValue = 0, displayValue = 0;
+volatile unsigned int displayValue = 0;
+volatile float delayValue = 0;
 
 /**
- *@brief Delay function for producing delay in 1 ms increments
+ *@brief Delay function for producing delay in .1 ms increments
  *@param t Input time to be delayed
  *@return void
  **/
@@ -34,7 +35,7 @@ void delay(uint16_t t)
 {
     uint16_t i;
     for(i=t; i > 0; i--)
-        __delay_cycles(100);
+        __delay_cycles(15000);
 }
 
 /********************************
@@ -110,7 +111,9 @@ void fourDigitNumber(int number)
 
   digitToDisplay(displayDigit[0]);    // Display current digit
   P2OUT |= SEG_4;
+  P1OUT &=~ SEG_DP;
   delay(delayValue);
+  P1OUT ^= SEG_DP;
 
   P1OUT &=~ (SEG_B + SEG_C + SEG_D + SEG_E + SEG_F + SEG_G);
   P2OUT &=~ SEG_A;
@@ -168,7 +171,9 @@ void register_settings_for_ADC10()
 void main(void) {
     WDTCTL = WDTPW | WDTHOLD;                   //! Stop Watchdog (Not recommended for code in production and devices working in field)
 
-    P1DIR |= (SEG_B + SEG_C + SEG_D + SEG_E + SEG_F + SEG_G);
+    BCSCTL1 |= (BIT0 + BIT1 + BIT2 + BIT3); // Selecting RSELx as 15
+        DCOCTL  |= (BIT6 + BIT5 + BIT4);        // Selecting DCOx as 7, DCO_freq = 15.6 MHz, Room Temp. ~ 25 deg. Celsius, Operating voltage 3.3 V
+    P1DIR |= (SEG_B + SEG_C + SEG_D + SEG_E + SEG_F + SEG_G + SEG_DP);
     P2DIR |= SEG_A;
     P2DIR |= (SEG_1 + SEG_2 + SEG_3 + SEG_4);
     P2DIR &=~ SW;
@@ -179,16 +184,36 @@ void main(void) {
 
     register_settings_for_ADC10();
 
+    unsigned int i;
 
     while(1)
     {
+
         ADC10CTL0 |= ENC + ADC10SC;             // Sampling and conversion start
-
         while(ADC10CTL1 & ADC10BUSY);           // Wait for conversion to end
+        int adcValue1 = ADC10MEM;
 
-        delayValue = map(ADC10MEM, 0, 1024, 1, 1500);
+        ADC10CTL0 |= ENC + ADC10SC;             // Sampling and conversion start
+        while(ADC10CTL1 & ADC10BUSY);           // Wait for conversion to end
+        int adcValue2 = ADC10MEM;
+
+        int avgADC = (adcValue1 + adcValue2) / 2;
+
+        if (avgADC <500)
+            delayValue = 1 + .1*avgADC;
+        else
+            delayValue = 51 + 0.8*(avgADC - 500);
 
 
+        /*
+        unsigned int count = map(ADC10MEM, 0, 1023, 1, 700);
+        delayValue = 100;
+
+        for(i = 0; i < count; i++)
+            {
+                delayValue = delayValue + (0.01 * delayValue);
+            }
+*/
         if(!(P2IN & SW))            // If SW is Pressed
         {
             __delay_cycles(20000);  // Wait 20ms to debounce
@@ -199,6 +224,7 @@ void main(void) {
                 displayValue = 0;
         }
 
-        fourDigitNumber(displayValue);
+        fourDigitNumber(avgADC);
+        P2OUT &=~ (SEG_1 + SEG_2 + SEG_3 + SEG_4);
     }
 }
