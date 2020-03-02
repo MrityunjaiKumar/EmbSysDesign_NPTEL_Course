@@ -150,11 +150,11 @@ void lcd_init()
  **/
 void lcd_display()
 {
-    int int_part_time = time;                                   // Integer part of calculated temperature value
-    int decimal_part_time = (time - (float)int_part_time) * 100.0 ;   // Decimal part of calculated temperature value
+    int int_part_time = time;                                   // Integer part of captured time
+    int decimal_part_time = (time - (float)int_part_time) * 100.0 ;   // Decimal part of captured time
 
-    int int_part_freq = freq;                                   // Integer part of calculated temperature value
-    int decimal_part_freq = (freq - (float)int_part_freq) * 100.0 ;   // Decimal part of calculated temperature value
+    int int_part_freq = freq;                                   // Integer part of captured frequency
+    int decimal_part_freq = (freq - (float)int_part_freq) * 100.0 ;   // Decimal part of captured frequency
 
     lcd_write(0x01, CMD);                       // Clear screen
     delay(20);
