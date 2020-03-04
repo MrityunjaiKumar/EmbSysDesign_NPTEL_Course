@@ -161,7 +161,7 @@ void register_settings_for_TIMER0()
 
 /**
  * @brief
- * These settings are w.r.t enabling TIMER0 on Lunch Box
+ * These settings are w.r.t GPIO on Lunch Box
  **/
 void initialize_GPIO()
 {
