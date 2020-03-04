@@ -8,11 +8,11 @@
 #define P1      BIT0                    // Charlieplex P1 -> P2.0
 #define P2      BIT1                    // Charlieplex P2 -> P2.1
 #define P3      BIT2                    // Charlieplex P3 -> P2.2
-#define P4      BIT3                    // Charlieplex P4 -> P2.3
 
 #define SW      BIT3                    // Switch -> P1.3
 
 volatile float displayLeds = 0;
+volatile char number = 0;
 
 //Data Table for 12 Charliplexed LEDs
 const unsigned int hi[12] = {P1,P2,P3,P2,P3,P1};
@@ -28,7 +28,7 @@ void charlie(unsigned int value)
 }
 
 
-volatile unsigned int leds[6]= {0,0,0,0,0,0};    // Global Array of LEDs
+volatile unsigned int leds[6]= {7,7,7,7,7,7};    // Global Array of LEDs
 
 
 /**
@@ -50,7 +50,7 @@ void register_settings_for_TIMER0()
 {
     CCTL0 = CCIE;                         // CCR0 interrupt enabled
     TACTL = TASSEL_1 + MC_1;              // ACLK = 32768 Hz, upmode
-    CCR0 =  32000;                        // 1 Hz
+    CCR0 =  250;                        // 1 Hz
 }
 
 void main(void) {
@@ -62,22 +62,20 @@ void main(void) {
     register_settings_for_ADC10();
     register_settings_for_TIMER0();
 
+    P1DIR |= BIT2;
     __bis_SR_register(GIE);                     // Enable CPU Interrupt
 
     while(1)
     {
-        charlie(leds[0]);             // Switch on LED (i)
-        __delay_cycles(1000);
-        charlie(leds[1]);             // Switch on LED (i)
-        __delay_cycles(1000);
-        charlie(leds[2]);             // Switch on LED (i)
-        __delay_cycles(1000);
-        charlie(leds[3]);             // Switch on LED (i)
-        __delay_cycles(1000);
-        charlie(leds[4]);             // Switch on LED (i)
-        __delay_cycles(1000);
-        charlie(leds[5]);             // Switch on LED (i)
-        __delay_cycles(100);
+            ADC10CTL0 |= ENC + ADC10SC;             // Sampling and conversion start
+            while(ADC10CTL1 & ADC10BUSY);           // Wait for conversion to end
+
+            int adcValue = ADC10MEM;
+            if(adcValue != 0)
+            {
+                displayLeds = log10(adcValue);
+                displayLeds = 2.0 * displayLeds;
+            }
     }
 }
 
@@ -85,20 +83,17 @@ void main(void) {
 #pragma vector= TIMER0_A0_VECTOR
 __interrupt void Timer_A (void)
 {
-    unsigned int i;
-    ADC10CTL0 |= ENC + ADC10SC;             // Sampling and conversion start
-    while(ADC10CTL1 & ADC10BUSY);           // Wait for conversion to end
-
-    for (i = 0; i < 6; i++)
-               {
-                   leds[i] = 0;
-               }
-
-           displayLeds = log10(ADC10MEM);
-           displayLeds = 2 * displayLeds;
-           for (i = 0; i < displayLeds; i++)
-           {
-               leds[i] = i;
-           }
+    if(number <= displayLeds)
+    {
+        leds[number] = number;             // Switch on LED (i)
+    }
+    else
+    {
+        leds[number] = 7;
+    }
+    charlie(leds[number]);
+    number++;
+    if(number == 6)
+        number = 0;
 
 }
