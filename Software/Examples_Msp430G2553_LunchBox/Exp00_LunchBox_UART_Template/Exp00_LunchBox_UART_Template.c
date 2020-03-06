@@ -20,6 +20,5 @@ int main(void)
 
         int i;
         for (i = 0; i < 20000; i++);
-
     }
 }
