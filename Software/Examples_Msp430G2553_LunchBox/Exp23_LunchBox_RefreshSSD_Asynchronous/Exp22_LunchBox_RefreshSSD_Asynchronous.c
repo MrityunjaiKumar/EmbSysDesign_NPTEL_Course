@@ -28,7 +28,6 @@ volatile unsigned char displayDigit[4];                         // Array to stor
 volatile unsigned char digit = 4;                               // Variable to store digit to be displayed
 volatile int adcValue;                                          // Variable to capture ADC value
 
-
 /**
  *@brief This function displays digit on single Seven Segment Display
  *@param digit Digit to be displayed
