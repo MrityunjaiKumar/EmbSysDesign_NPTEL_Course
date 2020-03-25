@@ -1,11 +1,11 @@
 #include <msp430.h> 
 
 #define SW      BIT3                    // Switch -> P1.3
-#define RED     BIT7                      // Red LED -> P1.7
+#define RED     BIT7                    // Red LED -> P1.7
 
 /*@brief entry point for the code*/
 void main(void) {
-    WDTCTL = WDTPW | WDTHOLD;           // Stop watchdog timer
+    WDTCTL = WDTPW | WDTHOLD;           //! Stop Watch dog (Not recommended for code in production and devices working in field)
 
     P1DIR |= RED;                       // Set LED pin -> Output
     P1DIR &= ~SW;                       // Set SW pin -> Input
@@ -17,7 +17,7 @@ void main(void) {
 
     while(1)
     {
-        //__bis_SR_register(GIE);             // Enable CPU Interrupt
+        //__bis_SR_register(GIE);           // Enable CPU Interrupt
         __bis_SR_register(LPM4_bits + GIE); // Enter LPM4 and Enable CPU Interrupt
 
         P1OUT ^= RED;                       // Toggle RED LED

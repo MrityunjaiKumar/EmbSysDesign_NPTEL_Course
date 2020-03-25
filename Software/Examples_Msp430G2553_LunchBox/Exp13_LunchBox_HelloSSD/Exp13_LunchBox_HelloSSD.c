@@ -51,7 +51,7 @@ void main(void) {
 
     while(1)
     {
-        if(!(P2IN & SW))            // If SW is Pressed
+        if(!(P2IN & SW))                // If SW is Pressed
         {
             __delay_cycles(20000);      //Delay to avoid Switch Bounce
             while(!(P2IN & SW));        // Wait till SW Released
