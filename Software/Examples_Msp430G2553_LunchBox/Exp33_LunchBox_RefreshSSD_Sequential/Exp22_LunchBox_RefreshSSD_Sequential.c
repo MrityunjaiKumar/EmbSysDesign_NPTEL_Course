@@ -27,7 +27,7 @@ volatile unsigned int displayValue = 0;
 volatile float delayValue = 0;
 
 /**
- *@brief Delay function for producing delay in 1 ms increments
+ *@brief Delay function for producing delay in .1 ms increments
  *@param t Input time to be delayed
  *@return void
  **/
@@ -35,7 +35,7 @@ void delay(uint16_t t)
 {
     uint16_t i;
     for(i=t; i > 0; i--)
-        __delay_cycles(15000);
+        __delay_cycles(1500);
 }
 
 /**
@@ -108,9 +108,7 @@ void fourDigitNumber(int number)
 
   digitToDisplay(displayDigit[0]);    // Display first digit
   P2OUT |= SEG_4;
-  P1OUT &=~ SEG_DP;
   delay(delayValue);
-  P1OUT ^= SEG_DP;
 
   P1OUT &=~ (SEG_B + SEG_C + SEG_E + SEG_F + SEG_G);
   P2OUT &=~ (SEG_A + SEG_D);
@@ -135,19 +133,6 @@ void fourDigitNumber(int number)
   digitToDisplay(displayDigit[3]);    // Display forth digit
   P2OUT |= SEG_1;
   delay(delayValue);
-}
-
-/**
- *@brief This function maps input range to the required range
- *@param long Input value to be mapped
- *@param long Input value range, minimum value
- *@param long Input value range, maximum value
- *@param long Output value range, minimum value
- *@param long Output value range, maximum value
- *@return Mapped output value
- **/
-long map(long x, long in_min, long in_max, long out_min, long out_max) {
-  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
 /**
@@ -193,11 +178,8 @@ void main(void) {
 
     register_settings_for_ADC10();              // Setting for ADC10
 
-    unsigned int i;
-
     while(1)
     {
-
         ADC10CTL0 |= ENC + ADC10SC;             // Sampling and conversion start
         while(ADC10CTL1 & ADC10BUSY);           // Wait for conversion to end
         int adcValue1 = ADC10MEM;               // ADC value 1
@@ -209,9 +191,9 @@ void main(void) {
         int avgADC = (adcValue1 + adcValue2) / 2;   // Average  of two values
 
         if (avgADC <500)                            // Calculating delay value
-            delayValue = 1 + .1*avgADC;
+            delayValue = (1 + .1*avgADC) * 10.0;
         else
-            delayValue = 51 + 0.8*(avgADC - 500);
+            delayValue = (51 + 0.8*(avgADC - 500)) * 10.0;
 
 
         if(!(P1IN & SW))                        // If SW is Pressed

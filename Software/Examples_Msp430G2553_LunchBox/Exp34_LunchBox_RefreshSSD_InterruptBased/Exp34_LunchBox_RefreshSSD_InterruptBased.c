@@ -23,7 +23,7 @@
 #define SEG_3   BIT2
 #define SEG_4   BIT3
 
-volatile unsigned int displayValue = 0;                         // Variable for calculating delay
+volatile unsigned int displayValue = 0;                         // Variable to be displayed
 volatile unsigned char displayDigit[4];                         // Array to store individual digit of DisplayValue
 volatile unsigned char digit = 4;                               // Variable to store digit to be displayed
 volatile int adcValue;                                          // Variable to capture ADC value
@@ -155,7 +155,7 @@ void register_settings_for_ADC10()
 void register_settings_for_TIMER0()
 {
     CCTL0 = CCIE;                               // CCR0 interrupt enabled
-    TACTL = TASSEL_1 + MC_1 + ID_3;             // ACLK = 32768/4 Hz, up to CCR0, Input Divider - /8
+    TACTL = TASSEL_1 + MC_1;                    // ACLK = 32768/4 Hz, up to CCR0
 }
 
 /**
@@ -210,9 +210,9 @@ void main(void) {
         int adcValue = ADC10MEM;                // Saving ADC value to adcValue
 
         if (adcValue <500)                      // Calculating TIMER0 compare register value
-            CCR0 = 1 + .1 * adcValue;
+            CCR0 = (1 + .1 * adcValue) * 10.0;
         else
-            CCR0 = 51 + 0.8 * (adcValue - 500);
+            CCR0 = (51 + 0.8 * (adcValue - 500)) * 10.0;
 
         fourDigitNumber(displayValue);          // Diving number to be displayed into 4 separate digits.
     }

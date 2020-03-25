@@ -7,8 +7,8 @@
 
 #define AIN     BIT0                    // Analog Input at P1.0
 
-volatile float displayLeds = 0;
-volatile char number = 1;
+volatile float logValues = 0;
+volatile unsigned char number = 1;
 
 /**
  * @brief
@@ -30,11 +30,11 @@ void main(void) {
     BCSCTL1 |= (BIT0 + BIT1 + BIT2 + BIT3);     // Selecting RSELx as 15
     DCOCTL  |= (BIT6 + BIT5 + BIT4);            // Selecting DCOx as 7, DCO_freq = 15.6 MHz
 
-    register_settings_for_ADC10();
+    register_settings_for_ADC10();              // Register setting for ADC10
 
-    initialise_SerialPrint_on_lunchbox(); // a function
-    __bis_SR_register(GIE);                     // Enable CPU Interrupt
+    initialise_SerialPrint_on_lunchbox();       // Function to initialize Serial on LunchBox using LunchboxCommon.h
 
+    unsigned int i;
     while(1)
     {
         ADC10CTL0 |= ENC + ADC10SC;             // Sampling and conversion start
@@ -44,14 +44,13 @@ void main(void) {
 
         if(adcValue != 0)
         {
-            displayLeds = log10(adcValue);      // Taking Log base 10 of ADC value
-            displayLeds = 2.0 * displayLeds;
+            logValues = log10(adcValue);      // Taking Log base 10 of ADC value
+            logValues = 2.0 * logValues;
         }
 
-        number  = 1 * displayLeds;
-        printf("(Log base 10) * 2 : %c \r\n", number + '0');
+        number  = 1 * logValues;
+        printf("ADC value : %d, \t(Log base 10) * 2 : %c \r\n", adcValue, number + '0');
 
-        int i;
         for (i = 0; i < 20000; i++);
     }
 }

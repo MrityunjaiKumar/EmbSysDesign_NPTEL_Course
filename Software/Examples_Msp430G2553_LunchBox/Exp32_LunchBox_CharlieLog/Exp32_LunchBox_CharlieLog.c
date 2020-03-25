@@ -7,7 +7,7 @@
 #define P2      BIT1                    // Charlieplex P2 -> P2.1
 #define P3      BIT2                    // Charlieplex P3 -> P2.2
 
-volatile float displayLeds = 0;
+volatile float logValues = 0;
 volatile char number = 1;
 
 //Data Table for 12 Charliplexed LEDs
@@ -70,8 +70,8 @@ void main(void) {
         int adcValue = ADC10MEM;
         if(adcValue != 0)
         {
-            displayLeds = log10(adcValue);      // Taking Log base 10 of ADC value
-            displayLeds = 2.0 * displayLeds;
+            logValues = log10(adcValue);      // Taking Log base 10 of ADC value
+            logValues = 2.0 * logValues;
         }
     }
 }
@@ -80,7 +80,7 @@ void main(void) {
 #pragma vector= TIMER0_A0_VECTOR
 __interrupt void Timer_A (void)
 {
-    if(number <= displayLeds)
+    if(number <= logValues)
     {
         charlie(number-1);                      //Switch on LED (i)
         number++;
