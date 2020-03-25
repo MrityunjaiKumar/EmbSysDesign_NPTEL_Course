@@ -3,12 +3,14 @@
 #include <stdio.h>
 #include <string.h>
 #include <inttypes.h>
+
 /*
  * An example of multi-line comments
  * @brief entry point for the code
- * */
+ */
 int main(void)
-{ //! Stop Watchdog (Not recommended for code in production and devices working in field)
+{
+    //! Stop Watchdog (Not recommended for code in production and devices working in field)
     WDTCTL = WDTPW | WDTHOLD;
 
     initialise_SerialPrint_on_lunchbox(); // a function

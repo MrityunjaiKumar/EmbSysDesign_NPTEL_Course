@@ -1,4 +1,5 @@
 #include <msp430.h> 
+
 /*@brief entry point for the code*/
 int main(void)
 {
