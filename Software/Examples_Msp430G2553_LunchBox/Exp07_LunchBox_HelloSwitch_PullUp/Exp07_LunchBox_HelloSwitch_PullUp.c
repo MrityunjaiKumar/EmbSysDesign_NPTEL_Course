@@ -5,7 +5,7 @@
 
 /*@brief entry point for the code*/
 void main(void) {
-    WDTCTL = WDTPW | WDTHOLD;       // Stop watchdog timer
+    WDTCTL = WDTPW | WDTHOLD;       //! Stop Watchdog (Not recommended for code in production and devices working in field)
 
     P1DIR |= LED;                   // Set LED pin -> Output
 
