@@ -122,11 +122,13 @@ void main(void)
 {
     WDTCTL = WDTPW + WDTHOLD;       //! Stop Watchdog (Not recommended for code in production and devices working in field)
 
-    lcd_init();                             // Initialising LCD
+    lcd_init();                     // Initialising LCD
 
-    lcd_setCursor(0,1);                     // Cursor position (0,1)
-    lcd_print("Hello Embedded");            // Print
+    lcd_setCursor(0,1);             // Cursor position (0,1)
+    lcd_print("Hello Embedded");    // Print
 
-    lcd_setCursor(1,3);                     // Cursor position (1,3)
-    lcd_print("Systems!");                   // Print
+    lcd_setCursor(1,5);             // Cursor position (1,3)
+    lcd_print("Systems!");          // Print
+
+    while(1);
 }
