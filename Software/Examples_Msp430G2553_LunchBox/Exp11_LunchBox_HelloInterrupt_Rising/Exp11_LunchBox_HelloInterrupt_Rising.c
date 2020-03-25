@@ -5,14 +5,14 @@
 
 /*@brief entry point for the code*/
 void main(void) {
-    WDTCTL = WDTPW | WDTHOLD;           // Stop watchdog timer
+    WDTCTL = WDTPW | WDTHOLD;           //! Stop Watchdog (Not recommended for code in production and devices working in field)
 
     P1DIR |= RED;                       // Set LED pin -> Output
     P1DIR &= ~SW;                       // Set SW pin -> Input
     P1REN |= SW;                        // Enable Resistor for SW pin
     P1OUT |= SW;                        // Select Pull Up for SW pin
 
-    P1IES |= SW;                       // Select Interrupt on Falling Edge
+    P1IES &= ~SW;                       // Select Interrupt on Rising Edge
     P1IE |= SW;                         // Enable Interrupt on SW pin
 
     __bis_SR_register(GIE);             // Enable CPU Interrupt
