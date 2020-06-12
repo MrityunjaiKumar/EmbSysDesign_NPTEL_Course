@@ -1,6 +1,6 @@
 # Design Files
 
-- [Eagle Files locations ](./Eagle_Files/)
+- [Eagle Files locations ](./Eagle/)
 
 Schematic 
 
