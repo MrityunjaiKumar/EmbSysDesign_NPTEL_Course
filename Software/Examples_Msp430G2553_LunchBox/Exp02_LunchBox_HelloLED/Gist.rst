@@ -19,6 +19,6 @@ Output
 Code
 ^^^^
 
-.. literalinclude:: ../../../../Software/EmbSysDesign/Software/Examples_Msp430G2553_LunchBox/Exp01_LunchBox_HelloLED/Exp01_LunchBox_HelloLED.c
+.. literalinclude:: ../../../../Software/EmbSysDesign/Software/Examples_Msp430G2553_LunchBox/Exp02_LunchBox_HelloLED/Exp02_LunchBox_HelloLED.c
     :linenos:
     :language: c

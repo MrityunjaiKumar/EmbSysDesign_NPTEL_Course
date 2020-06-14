@@ -1,5 +1,5 @@
 Experiment 16 - LunchBox Hello Timer
-===================================
+====================================
 
 Description
 ^^^^^^^^^^^^
@@ -19,6 +19,6 @@ Output
 Code
 ^^^^
 
-.. literalinclude:: ../../../../Software/EmbSysDesign/Software/Examples_Msp430G2553_LunchBox/Exp16_LunchBox_HelloTimer/Exp16_LunchBox_HelloTimer.c
+.. literalinclude:: ../../../../Software/EmbSysDesign/Software/Examples_Msp430G2553_LunchBox/Exp17_LunchBox_HelloTimer/Exp17_LunchBox_HelloTimer.c
     :linenos:
     :language: c

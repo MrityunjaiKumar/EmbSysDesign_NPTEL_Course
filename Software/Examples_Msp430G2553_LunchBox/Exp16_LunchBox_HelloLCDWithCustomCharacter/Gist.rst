@@ -1,5 +1,5 @@
-Experiment 2 - LunchBox Hello Blink
-===================================
+Experiment 15 - LunchBox Hello LCD With Custom Character
+========================================================
 
 Description
 ^^^^^^^^^^^^
@@ -19,6 +19,6 @@ Output
 Code
 ^^^^
 
-.. literalinclude:: ../../../../Software/EmbSysDesign/Software/Examples_Msp430G2553_LunchBox/Exp02_LunchBox_HelloBlink/Exp02_LunchBox_HelloBlink.c
+.. literalinclude:: ../../../../Software/EmbSysDesign/Software/Examples_Msp430G2553_LunchBox/Exp16_LunchBox_HelloLCDWithCustomCharacter/Exp16_LunchBox_HelloLCDWithCustomCharacter.c
     :linenos:
     :language: c

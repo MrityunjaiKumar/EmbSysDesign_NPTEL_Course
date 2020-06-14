@@ -1,5 +1,5 @@
-Experiment 10 - LunchBox Hello Interrupt on Rising Edge
-===================================
+Experiment 10 - LunchBox HelloInterrupt Rising
+==============================================
 
 Description
 ^^^^^^^^^^^^
@@ -19,6 +19,6 @@ Output
 Code
 ^^^^
 
-.. literalinclude:: ../../../../Software/EmbSysDesign/Software/Examples_Msp430G2553_LunchBox/Exp10_LunchBox_HelloInterrupt_Rising/Exp10_LunchBox_HelloInterrupt_Rising.c
+.. literalinclude:: ../../../../Software/EmbSysDesign/Software/Examples_Msp430G2553_LunchBox/Exp11_LunchBox_HelloInterrupt_Rising/Exp11_LunchBox_HelloInterrupt_Rising.c
     :linenos:
     :language: c

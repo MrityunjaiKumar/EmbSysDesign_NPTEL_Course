@@ -1,5 +1,5 @@
-Experiment 6 - LunchBox Hello Switch Pull Up
-===================================
+Experiment 6 - LunchBox HelloSwitch Pull Up
+===========================================
 
 Description
 ^^^^^^^^^^^^
@@ -19,6 +19,6 @@ Output
 Code
 ^^^^
 
-.. literalinclude:: ../../../../Software/EmbSysDesign/Software/Examples_Msp430G2553_LunchBox/Exp06_LunchBox_HelloSwitch_PullUp/Exp06_LunchBox_HelloSwitch_PullUp.c
+.. literalinclude:: ../../../../Software/EmbSysDesign/Software/Examples_Msp430G2553_LunchBox/Exp07_LunchBox_HelloSwitch_PullUp/Exp07_LunchBox_HelloSwitch_PullUp.c
     :linenos:
     :language: c

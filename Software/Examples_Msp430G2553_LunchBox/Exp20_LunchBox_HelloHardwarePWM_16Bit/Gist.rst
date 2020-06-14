@@ -1,5 +1,5 @@
-Experiment 14 - LunchBox Hello Hardware PWM
-===================================
+Experiment 19 - LunchBox Hello Hardware PWM (16 bit)
+====================================================
 
 Description
 ^^^^^^^^^^^^
@@ -19,6 +19,6 @@ Output
 Code
 ^^^^
 
-.. literalinclude:: ../../../../Software/EmbSysDesign/Software/Examples_Msp430G2553_LunchBox/Exp14_LunchBox_HelloHardwarePWM/Exp14_LunchBox_HelloHardwarePWM.c
+.. literalinclude:: ../../../../Software/EmbSysDesign/Software/Examples_Msp430G2553_LunchBox/Exp20_LunchBox_HelloHardwarePWM_16Bit/Exp20_LunchBox_HelloHardwarePWM_16Bit.c
     :linenos:
     :language: c

@@ -1,4 +1,4 @@
-Experiment 17 - LunchBox Hello ADC
+Experiment 20 - LunchBox Hello ADC
 ===================================
 
 Description
@@ -19,6 +19,6 @@ Output
 Code
 ^^^^
 
-.. literalinclude:: ../../../../Software/EmbSysDesign/Software/Examples_Msp430G2553_LunchBox/Exp17_LunchBox_HelloADC/Exp17_LunchBox_HelloADC.c
+.. literalinclude:: ../../../../Software/EmbSysDesign/Software/Examples_Msp430G2553_LunchBox/Exp21_LunchBox_HelloADC/Exp21_LunchBox_HelloADC.c
     :linenos:
     :language: c

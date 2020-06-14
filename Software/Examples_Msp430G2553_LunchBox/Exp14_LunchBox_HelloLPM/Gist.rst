@@ -1,5 +1,5 @@
 Experiment 13 - LunchBox Hello Low Power Mode (LPM)
-===================================
+===================================================
 
 Description
 ^^^^^^^^^^^^
@@ -19,6 +19,6 @@ Output
 Code
 ^^^^
 
-.. literalinclude:: ../../../../Software/EmbSysDesign/Software/Examples_Msp430G2553_LunchBox/Exp13_LunchBox_HelloLPM/Exp13_LunchBox_HelloLPM.c
+.. literalinclude:: ../../../../Software/EmbSysDesign/Software/Examples_Msp430G2553_LunchBox/Exp14_LunchBox_HelloLPM/Exp14_LunchBox_HelloLPM.c
     :linenos:
     :language: c

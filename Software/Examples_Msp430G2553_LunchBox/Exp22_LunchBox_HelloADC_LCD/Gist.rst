@@ -1,5 +1,5 @@
-Experiment 17 - LunchBox Hello ADC
-===================================
+Experiment 21 - LunchBox Hello ADC LCD
+======================================
 
 Description
 ^^^^^^^^^^^^
@@ -19,6 +19,6 @@ Output
 Code
 ^^^^
 
-.. literalinclude:: ../../../../Software/EmbSysDesign/Software/Examples_Msp430G2553_LunchBox/Exp17_LunchBox_HelloADC/Exp17_LunchBox_HelloADC.c
+.. literalinclude:: ../../../../Software/EmbSysDesign/Software/Examples_Msp430G2553_LunchBox/Exp22_LunchBox_HelloADC_LCD/Exp22_LunchBox_HelloADC_LCD.c
     :linenos:
     :language: c

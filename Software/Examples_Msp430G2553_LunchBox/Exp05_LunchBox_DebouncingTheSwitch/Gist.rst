@@ -1,5 +1,5 @@
 Experiment 4 - LunchBox Debouncing the Switch
-===================================
+=============================================
 
 Description
 ^^^^^^^^^^^^
@@ -19,6 +19,6 @@ Output
 Code
 ^^^^
 
-.. literalinclude:: ../../../../Software/EmbSysDesign/Software/Examples_Msp430G2553_LunchBox/Exp04_LunchBox_DebouncingTheSwitch/Exp04_LunchBox_DebouncingTheSwitch.c
+.. literalinclude:: ../../../../Software/EmbSysDesign/Software/Examples_Msp430G2553_LunchBox/Exp05_LunchBox_DebouncingTheSwitch/Exp05_LunchBox_DebouncingTheSwitch.c
     :linenos:
     :language: c

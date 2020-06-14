@@ -1,5 +1,5 @@
 Experiment 12 - LunchBox Hello Seven Segment Display
-===================================
+====================================================
 
 Description
 ^^^^^^^^^^^^
@@ -19,6 +19,6 @@ Output
 Code
 ^^^^
 
-.. literalinclude:: ../../../../Software/EmbSysDesign/Software/Examples_Msp430G2553_LunchBox/Exp12_LunchBox_HelloSSD/Exp12_LunchBox_HelloSSD.c
+.. literalinclude:: ../../../../Software/EmbSysDesign/Software/Examples_Msp430G2553_LunchBox/Exp13_LunchBox_HelloSSD/Exp13_LunchBox_HelloSSD.c
     :linenos:
     :language: c

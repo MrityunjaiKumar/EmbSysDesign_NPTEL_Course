@@ -1,5 +1,5 @@
 Experiment 3 - LunchBox Hello Switch
-===================================
+====================================
 
 Description
 ^^^^^^^^^^^^
@@ -19,6 +19,6 @@ Output
 Code
 ^^^^
 
-.. literalinclude:: ../../../../Software/EmbSysDesign/Software/Examples_Msp430G2553_LunchBox/Exp03_LunchBox_HelloSwitch/Exp03_LunchBox_HelloSwitch.c
+.. literalinclude:: ../../../../Software/EmbSysDesign/Software/Examples_Msp430G2553_LunchBox/Exp04_LunchBox_HelloSwitch/Exp04_LunchBox_HelloSwitch.c
     :linenos:
     :language: c

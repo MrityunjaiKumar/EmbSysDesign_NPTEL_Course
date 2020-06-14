@@ -1,5 +1,5 @@
-Experiment 27 - LunchBox Hello Serial
-=====================================
+Experiment 26  LunchBox Lemon Battery LED Blink
+===============================================
 
 Description
 ^^^^^^^^^^^^
@@ -19,6 +19,6 @@ Output
 Code
 ^^^^
 
-.. literalinclude:: ../../../../Software/EmbSysDesign/Software/Examples_Msp430G2553_LunchBox/Exp28_LunchBox_HelloSerial/Exp28_LunchBox_HelloSerial.c
+.. literalinclude:: ../../../../Software/EmbSysDesign/Software/Examples_Msp430G2553_LunchBox/Exp27_LunchBox_Lemon_Battery_LED_Blink/Exp27_LunchBox_Lemon_Battery_LED_Blink.c
     :linenos:
     :language: c

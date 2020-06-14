@@ -1,5 +1,5 @@
-Experiment 17 - LunchBox Hello ADC
-===================================
+Experiment 22 - LunchBox Hello ADC Internal Temperature Sensor
+==============================================================
 
 Description
 ^^^^^^^^^^^^
@@ -19,6 +19,6 @@ Output
 Code
 ^^^^
 
-.. literalinclude:: ../../../../Software/EmbSysDesign/Software/Examples_Msp430G2553_LunchBox/Exp17_LunchBox_HelloADC/Exp17_LunchBox_HelloADC.c
+.. literalinclude:: ../../../../Software/EmbSysDesign/Software/Examples_Msp430G2553_LunchBox/Exp23_LunchBox_HelloADC_Internal_Temperature_Sensor/Exp23_LunchBox_HelloADC_Internal_Temperature_Sensor.c
     :linenos:
     :language: c

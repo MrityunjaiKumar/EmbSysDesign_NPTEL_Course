@@ -1,5 +1,5 @@
-Experiment 2 - LunchBox Hello Blink
-===================================
+Experiment 8 - LunchBox HelloResetSource
+========================================
 
 Description
 ^^^^^^^^^^^^
@@ -19,6 +19,6 @@ Output
 Code
 ^^^^
 
-.. literalinclude:: ../../../../Software/EmbSysDesign/Software/Examples_Msp430G2553_LunchBox/Exp02_LunchBox_HelloBlink/Exp02_LunchBox_HelloBlink.c
+.. literalinclude:: ../../../../Software/EmbSysDesign/Software/Examples_Msp430G2553_LunchBox/Exp09_LunchBox_HelloResetSource/Exp09_LunchBox_HelloResetSource.c
     :linenos:
     :language: c

@@ -1,5 +1,5 @@
-Experiment 9 - LunchBox Hello Interrupt
-===================================
+Experiment 9 - LunchBox HelloInterrupt
+======================================
 
 Description
 ^^^^^^^^^^^^
@@ -19,6 +19,6 @@ Output
 Code
 ^^^^
 
-.. literalinclude:: ../../../../Software/EmbSysDesign/Software/Examples_Msp430G2553_LunchBox/Exp09_LunchBox_HelloInterrupt/Exp09_LunchBox_HelloInterrupt.c
+.. literalinclude:: ../../../../Software/EmbSysDesign/Software/Examples_Msp430G2553_LunchBox/Exp10_LunchBox_HelloInterrupt/Exp10_LunchBox_HelloInterrupt.c
     :linenos:
     :language: c

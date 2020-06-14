@@ -1,5 +1,5 @@
-Experiment 15 - LunchBox Hello Blink
-===================================
+Experiment 17 -LunchBox HelloSoftwarePWM (Large Delay)
+======================================================
 
 Description
 ^^^^^^^^^^^^
@@ -19,6 +19,6 @@ Output
 Code
 ^^^^
 
-.. literalinclude:: ../../../../Software/EmbSysDesign/Software/Examples_Msp430G2553_LunchBox/Exp15_LunchBox_HelloSoftwarePWM/Exp15_LunchBox_HelloSoftwarePWM.c
+.. literalinclude:: ../../../../Software/EmbSysDesign/Software/Examples_Msp430G2553_LunchBox/Exp18_LunchBox_HelloSoftwarePWM_Large_Delay/Exp18_LunchBox_HelloSoftwarePWM_Large_Delay.c
     :linenos:
     :language: c
