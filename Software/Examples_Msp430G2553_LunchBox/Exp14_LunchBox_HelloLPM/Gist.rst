@@ -1,20 +1,29 @@
-Experiment 13 - LunchBox Hello Low Power Mode (LPM)
+Experiment 14 - LunchBox Hello Low Power Mode (LPM)
 ===================================================
 
 Description
 ^^^^^^^^^^^^
-This example code provides the functions and register settings for operating MSP430 controller in Low Power Mode. In this example code state of onboard LED on LunchBox is toggled with onboard switch having interrupt on rising edge while running the microcontroller in Low Power Mode. 
+This example code provides the functions and register settings for operating MSP430 controller in Low Power Mode. 
+
+Course link
+^^^^^^^^^^^^
+Covered in lecture number - Lecture 27
 
 Hardware needed
 ^^^^^^^^^^^^^^^
-None
+NA
+
+Schematic image
+^^^^^^^^^^^^^^^
+NA
 
 Connections
 ^^^^^^^^^^^
-None
+NA
 
 Output
 ^^^^^^
+The state of onboard LED on LunchBox is toggled with onboard switch having interrupt on rising edge while running the microcontroller in Low Power Mode. 
 
 Code
 ^^^^
