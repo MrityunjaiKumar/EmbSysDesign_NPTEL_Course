@@ -1,15 +1,30 @@
-# Exp 10 
+# Exp 11
+
 ## LunchBox Hello Interrupt on Rising Edge
+
 ___
 
 ### Description
 
 This example code provides the functions and register settings for toggling the state of onboard LED with an external switch having interrupt on rising edge.
 
+###Course link
+
+Covered in lecture number - Lecture 26
+
 ### Hardware needed
 
-Push Button Switch, Resistor (1 kohm), Breadboard, Connecting wires.
+Push Button Switch, Resistor (1 kohm), Capacitor(1uF), Breadboard, Connecting wires.
+
+###Schematic image
+https://drive.google.com/file/d/1hfJpNFtMRx7g5U098fhPMUVDBGL48AU1/view?usp=sharing
+https://drive.google.com/file/d/1_wK_YnGEVktMPqLMu3tF29diAxjtUcgu/view?usp=sharing
 
 ### Connections
 
-One end of switch is connected to Ground and another end is connected to pin 1.4 of Lunchbox. This pin is also connected to Vcc (3.3 V) through a pull-up resistor.
+One end of switch is connected to Ground and another end is connected to pin 1.4 of Lunchbox. This pin is also connected to Vcc (3.3 V) through a pull-up resistor. Capacitor is connected across two ends of switch.
+
+
+### Output
+
+Onboard LED will toggle on releasing external switch.
