@@ -8,7 +8,7 @@ ___
 
 This example code provides the functions and register settings for toggling the state of onboard LED with an external switch having interrupt on falling edge.
 
-###Course link
+### Course link
 
 Covered in lecture number - Lecture 26
 
@@ -16,7 +16,8 @@ Covered in lecture number - Lecture 26
 
 Push Button Switch, Resistor (1 kohm), Capacitor(1uF), Breadboard, Connecting wires.
 
-###Schematic image
+### Schematic image
+
 https://drive.google.com/file/d/1hfJpNFtMRx7g5U098fhPMUVDBGL48AU1/view?usp=sharing
 https://drive.google.com/file/d/1_wK_YnGEVktMPqLMu3tF29diAxjtUcgu/view?usp=sharing
 

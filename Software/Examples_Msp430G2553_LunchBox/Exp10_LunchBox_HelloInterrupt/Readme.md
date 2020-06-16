@@ -9,7 +9,7 @@ ___
 
 This example code constitutes functions and register settings for toggling the state of onboard LED with onboard switch having interrupt on rising edge on Lunchbox.
 
-###Course link
+### Course link
 
 Covered in lecture number - Lecture 26
 
@@ -17,7 +17,7 @@ Covered in lecture number - Lecture 26
 
 NA
 
-###Schematic image
+### Schematic image
 
 NA
 
