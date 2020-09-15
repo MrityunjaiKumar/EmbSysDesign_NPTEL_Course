@@ -8,3 +8,6 @@
 
 ### Board file
 ![board](images/MSP_Lunchbox_OpenSource_v1_brd.png)
+
+### License
+ GPL-3.0 License
